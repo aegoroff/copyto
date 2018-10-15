@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/voxelbrain/goptions"
+	"os"
 )
 
 type options struct {
@@ -24,6 +25,11 @@ type options struct {
 
 type command func(options) error
 
+var commands = map[goptions.Verbs]command{
+	"cmdline": commandlinecmd,
+	"config":  configcmd,
+}
+
 func main() {
 	opt := options{}
 
@@ -37,5 +43,13 @@ func main() {
 	if len(opt.Verbs) == 0 || err != nil {
 		goptions.PrintHelp()
 		return
+	}
+
+	if cmd, found := commands[opt.Verbs]; found {
+		err := cmd(opt)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "error:", err)
+			os.Exit(1)
+		}
 	}
 }
