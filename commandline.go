@@ -1,5 +1,5 @@
 package main
 
 func commandlinecmd(opt options) error {
-	return nil
+	return coptyfiletree(opt.CmdLine.Source, opt.CmdLine.Target)
 }
