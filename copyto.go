@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/BurntSushi/toml"
 	"github.com/voxelbrain/goptions"
 	"os"
 )
@@ -25,6 +26,16 @@ type options struct {
 }
 
 type command func(options) error
+
+type tomlConfig struct {
+	Title       string
+	Definitions map[string]definition
+}
+
+type definition struct {
+	Source string
+	Target string
+}
 
 var commands = map[goptions.Verbs]command{
 	"cmdline": commandlinecmd,
@@ -56,4 +67,21 @@ func main() {
 			os.Exit(1)
 		}
 	}
+}
+
+func commandlinecmd(opt options) error {
+	return coptyfiletree(opt.CmdLine.Source, opt.CmdLine.Target, opt.Verbose)
+}
+
+func configcmd(opt options) error {
+	var config tomlConfig
+	if _, err := toml.DecodeFile(opt.Config.Path, &config); err != nil {
+		return err
+	}
+
+	for _, v := range config.Definitions {
+		coptyfiletree(v.Source, v.Target, opt.Verbose)
+	}
+
+	return nil
 }
