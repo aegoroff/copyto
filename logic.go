@@ -32,8 +32,8 @@ func coptyfiletree(source, target string, verbose bool) error {
 func printTotals(res copyResult) {
 
 	const totalTemplate = `
-  Total copied:                              {{.TotalCopied}}
-  Present in target but not found in source: {{.NotFoundInSource}}
+   Total copied:                              {{.TotalCopied}}
+   Present in target but not found in source: {{.NotFoundInSource}}
 
 `
 
