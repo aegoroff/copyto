@@ -79,7 +79,8 @@ func configcmd(opt options) error {
 		return err
 	}
 
-	for _, v := range config.Definitions {
+	for k, v := range config.Definitions {
+		fmt.Printf(" Section: %s\n Source: %s\n Target: %s", k, v.Source, v.Target)
 		coptyfiletree(v.Source, v.Target, opt.Verbose)
 	}
 

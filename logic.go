@@ -7,7 +7,13 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 )
+
+type copyResult struct {
+	TotalCopied      int64
+	NotFoundInSource int64
+}
 
 func coptyfiletree(source, target string, verbose bool) error {
 
@@ -17,17 +23,32 @@ func coptyfiletree(source, target string, verbose bool) error {
 	go readDirectory(source, srcCh)
 	go readDirectory(target, tgtCh)
 
-	copyTree(srcCh, tgtCh, source, target, verbose, copyFile)
+	res := copyTree(srcCh, tgtCh, source, target, verbose, copyFile)
+	printTotals(res)
 
 	return nil
 }
 
-func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase string, targetBase string, verbose bool, copyFunc func(src, dst string) error) {
+func printTotals(res copyResult) {
+
+	const totalTemplate = `
+  Total copied:                              {{.TotalCopied}}
+  Present in target but not found in source: {{.NotFoundInSource}}
+
+`
+
+	var report = template.Must(template.New("copyResult").Parse(totalTemplate))
+	report.Execute(os.Stdout, res)
+}
+
+func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase string, targetBase string, verbose bool, copyFunc func(src, dst string) error) copyResult {
 
 	sourcesTree, targetsTree := createTrees(sourceCh, targetCh)
 
+	var result copyResult
+
 	if sourcesTree.Len() == 0 || targetsTree.Len() == 0 {
-		return
+		return result
 	}
 
 	targetsTree.Ascend(func(c *rbtree.Comparable) bool {
@@ -35,6 +56,7 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 		for _, tgt := range node.paths {
 			sources, ok := getFilePathsFromTree(sourcesTree, node.name)
 			if !ok {
+				result.NotFoundInSource++
 				continue
 			}
 			normalizedTgt := strings.Replace(tgt, targetBase, "", 1)
@@ -47,13 +69,18 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 					} else if verbose {
 						fmt.Printf("[%s] copied to [%s]\n", src, tgt)
 					}
+					result.TotalCopied++
 					break
+				} else {
+					result.NotFoundInSource++
 				}
 			}
 		}
 
 		return true
 	})
+
+	return result
 }
 
 func createTrees(sourceCh <-chan *string, targetCh <-chan *string) (*rbtree.RbTree, *rbtree.RbTree) {
