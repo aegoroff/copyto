@@ -31,7 +31,7 @@ func Test_copyTreeAllTargetFilesPresentInSource_AllCopied(t *testing.T) {
 	result := make(map[string]string)
 
 	// Act
-	copyTree(srcCh, tgtCh, "/s", "/t", func(src, dst string) error {
+	copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
 		result[dst] = src
 		return nil
 	})
@@ -70,7 +70,7 @@ func Test_copyTreeSourcesMoreThenTargets_OnlyMathesCopiedFromSources(t *testing.
 	result := make(map[string]string)
 
 	// Act
-	copyTree(srcCh, tgtCh, "/s", "/t", func(src, dst string) error {
+	copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
 		result[dst] = src
 		return nil
 	})
@@ -107,7 +107,7 @@ func Test_copyTreeTargetsContainMissingSourcesElements_OnlyFoundCopiedFromSource
 	result := make(map[string]string)
 
 	// Act
-	copyTree(srcCh, tgtCh, "/s", "/t", func(src, dst string) error {
+	copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
 		result[dst] = src
 		return nil
 	})
@@ -143,7 +143,7 @@ func Test_copyTreeSourcesContainsSameNameFilesButInSubfolders_OnlyExactMatchedCo
 	result := make(map[string]string)
 
 	// Act
-	copyTree(srcCh, tgtCh, "/s", "/t", func(src, dst string) error {
+	copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
 		result[dst] = src
 		return nil
 	})
@@ -179,7 +179,7 @@ func Test_copyTreeSourcesContainsNoMatchingFiles_NothingCopied(t *testing.T) {
 	result := make(map[string]string)
 
 	// Act
-	copyTree(srcCh, tgtCh, "/s", "/t", func(src, dst string) error {
+	copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
 		result[dst] = src
 		return nil
 	})
@@ -214,7 +214,7 @@ func Test_copyTreeEmptySources_NothingCopied(t *testing.T) {
 	result := make(map[string]string)
 
 	// Act
-	copyTree(srcCh, tgtCh, "/s", "/t", func(src, dst string) error {
+	copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
 		result[dst] = src
 		return nil
 	})
@@ -249,7 +249,7 @@ func Test_copyTreeEmptyTargets_NothingCopied(t *testing.T) {
 	result := make(map[string]string)
 
 	// Act
-	copyTree(srcCh, tgtCh, "/s", "/t", func(src, dst string) error {
+	copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
 		result[dst] = src
 		return nil
 	})
@@ -284,7 +284,7 @@ func Test_copyTreeDifferentCase_DifferentCaseFilesCopied(t *testing.T) {
 	result := make(map[string]string)
 
 	// Act
-	copyTree(srcCh, tgtCh, "/s", "/t", func(src, dst string) error {
+	copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
 		result[dst] = src
 		return nil
 	})

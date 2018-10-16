@@ -8,6 +8,7 @@ import (
 
 type options struct {
 	Version bool `goptions:"--version, description='Print version'"`
+	Verbose bool `goptions:"-v, --verbose, description='Verbose output'"`
 
 	goptions.Verbs
 
@@ -41,6 +42,7 @@ func main() {
 	}
 
 	if len(opt.Verbs) == 0 || err != nil {
+		fmt.Printf("%v\n", err)
 		goptions.PrintHelp()
 		return
 	}

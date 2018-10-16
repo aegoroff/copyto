@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/aegoroff/godatastruct/rbtree"
 	"log"
 	"os"
@@ -8,7 +9,7 @@ import (
 	"strings"
 )
 
-func coptyfiletree(source, target string) error {
+func coptyfiletree(source, target string, verbose bool) error {
 
 	srcCh := make(chan *string, 1024)
 	tgtCh := make(chan *string, 1024)
@@ -16,12 +17,12 @@ func coptyfiletree(source, target string) error {
 	go readDirectory(source, srcCh)
 	go readDirectory(target, tgtCh)
 
-	copyTree(srcCh, tgtCh, source, target, copyFile)
+	copyTree(srcCh, tgtCh, source, target, verbose, copyFile)
 
 	return nil
 }
 
-func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase string, targetBase string, copyFunc func(src, dst string) error) {
+func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase string, targetBase string, verbose bool, copyFunc func(src, dst string) error) {
 
 	sourcesTree, targetsTree := createTrees(sourceCh, targetCh)
 
@@ -43,6 +44,8 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 				if strings.EqualFold(normalizedTgt, normalizedSrc) {
 					if err := copyFunc(src, tgt); err != nil {
 						log.Printf("%v", err)
+					} else if verbose {
+						fmt.Printf("[%s] copied to [%s]\n", src, tgt)
 					}
 					break
 				}
