@@ -15,7 +15,6 @@ type options struct {
 	CmdLine struct {
 		Source string `goptions:"-s, --source, obligatory, description='Path to the source folder, to copy (sync) data from'"`
 		Target string `goptions:"-t, --target, obligatory, description='Path to the target folder, to copy (sync) data to'"`
-		Strict bool   `goptions:"-r,--strict, description='Use strict mode copy'"`
 	} `goptions:"cmdline"`
 
 	// Using command line to set source and target
