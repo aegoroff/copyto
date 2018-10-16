@@ -31,7 +31,7 @@ func Test_copyTreeAllTargetFilesPresentInSource_AllCopied(t *testing.T) {
 	result := make(map[string]string)
 
 	// Act
-	copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
+	r := copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
 		result[dst] = src
 		return nil
 	})
@@ -42,6 +42,8 @@ func Test_copyTreeAllTargetFilesPresentInSource_AllCopied(t *testing.T) {
 	ass.Equal("/s/p1/f2.txt", result["/t/p1/f2.txt"])
 	ass.Equal("/s/p1/p2/f1.txt", result["/t/p1/p2/f1.txt"])
 	ass.Equal("/s/p1/p2/f2.txt", result["/t/p1/p2/f2.txt"])
+	ass.Equal(int64(4), r.TotalCopied)
+	ass.Equal(int64(0), r.NotFoundInSource)
 }
 
 func Test_copyTreeSourcesMoreThenTargets_OnlyMathesCopiedFromSources(t *testing.T) {
@@ -70,7 +72,7 @@ func Test_copyTreeSourcesMoreThenTargets_OnlyMathesCopiedFromSources(t *testing.
 	result := make(map[string]string)
 
 	// Act
-	copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
+	r := copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
 		result[dst] = src
 		return nil
 	})
@@ -79,6 +81,8 @@ func Test_copyTreeSourcesMoreThenTargets_OnlyMathesCopiedFromSources(t *testing.
 	ass.Equal(2, len(result))
 	ass.Equal("/s/p1/f1.txt", result["/t/p1/f1.txt"])
 	ass.Equal("/s/p1/f2.txt", result["/t/p1/f2.txt"])
+	ass.Equal(int64(2), r.TotalCopied)
+	ass.Equal(int64(0), r.NotFoundInSource)
 }
 
 func Test_copyTreeTargetsContainMissingSourcesElements_OnlyFoundCopiedFromSources(t *testing.T) {
@@ -107,7 +111,7 @@ func Test_copyTreeTargetsContainMissingSourcesElements_OnlyFoundCopiedFromSource
 	result := make(map[string]string)
 
 	// Act
-	copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
+	r := copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
 		result[dst] = src
 		return nil
 	})
@@ -115,6 +119,8 @@ func Test_copyTreeTargetsContainMissingSourcesElements_OnlyFoundCopiedFromSource
 	// Assert
 	ass.Equal(1, len(result))
 	ass.Equal("/s/p1/f1.txt", result["/t/p1/f1.txt"])
+	ass.Equal(int64(1), r.TotalCopied)
+	ass.Equal(int64(1), r.NotFoundInSource)
 }
 
 func Test_copyTreeSourcesContainsSameNameFilesButInSubfolders_OnlyExactMatchedCopiedFromSources(t *testing.T) {
@@ -179,13 +185,15 @@ func Test_copyTreeSourcesContainsNoMatchingFiles_NothingCopied(t *testing.T) {
 	result := make(map[string]string)
 
 	// Act
-	copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
+	r := copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
 		result[dst] = src
 		return nil
 	})
 
 	// Assert
 	ass.Equal(0, len(result))
+	ass.Equal(int64(0), r.TotalCopied)
+	ass.Equal(int64(2), r.NotFoundInSource)
 }
 
 func Test_copyTreeEmptySources_NothingCopied(t *testing.T) {

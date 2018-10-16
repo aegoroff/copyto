@@ -60,6 +60,7 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 				continue
 			}
 			normalizedTgt := strings.Replace(tgt, targetBase, "", 1)
+			found := false
 			for _, src := range sources {
 				normalizedSrc := strings.Replace(src, sourceBase, "", 1)
 
@@ -70,10 +71,12 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 						fmt.Printf("[%s] copied to [%s]\n", src, tgt)
 					}
 					result.TotalCopied++
+					found = true
 					break
-				} else {
-					result.NotFoundInSource++
 				}
+			}
+			if !found {
+				result.NotFoundInSource++
 			}
 		}
 
