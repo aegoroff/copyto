@@ -42,7 +42,9 @@ func main() {
 	}
 
 	if len(opt.Verbs) == 0 || err != nil {
-		fmt.Printf("%v\n", err)
+		if err != nil {
+			fmt.Printf("%v\n", err)
+		}
 		goptions.PrintHelp()
 		return
 	}
