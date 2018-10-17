@@ -29,12 +29,18 @@ type command func(options) error
 
 type tomlConfig struct {
 	Title       string
+	Sources     map[string]source
 	Definitions map[string]definition
 }
 
-type definition struct {
+type source struct {
 	Source string
-	Target string
+}
+
+type definition struct {
+	SourceLink string
+	Source     string
+	Target     string
 }
 
 var commands = map[goptions.Verbs]command{
@@ -80,9 +86,20 @@ func configcmd(opt options) error {
 	}
 
 	for k, v := range config.Definitions {
-		fmt.Printf(" Section: %s\n Source: %s\n Target: %s", k, v.Source, v.Target)
-		coptyfiletree(v.Source, v.Target, opt.Verbose)
+		source := findSource(v, config.Sources)
+		fmt.Printf(" Section: %s\n Source: %s\n Target: %s", k, source, v.Target)
+		coptyfiletree(source, v.Target, opt.Verbose)
 	}
 
 	return nil
+}
+
+func findSource(def definition, sources map[string]source) string {
+	if len(def.Source) > 0 {
+		return def.Source
+	}
+	if src, ok := sources[def.SourceLink]; ok {
+		return src.Source
+	}
+	return ""
 }
