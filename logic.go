@@ -23,13 +23,21 @@ func coptyfiletree(source, target string, verbose bool) error {
 	go readDirectory(source, srcCh)
 	go readDirectory(target, tgtCh)
 
-	res := copyTree(srcCh, tgtCh, source, target, verbose, copyFile)
-	printTotals(res)
+	res, missing := copyTree(srcCh, tgtCh, source, target, verbose, copyFile)
+	printTotals(res, missing)
 
 	return nil
 }
 
-func printTotals(res copyResult) {
+func printTotals(res copyResult, missing []string) {
+
+	if len(missing) > 0 {
+		fmt.Println("   Found files that present in target but missing in source:")
+	}
+
+	for _, f := range missing {
+		fmt.Printf("     %s\n", f)
+	}
 
 	const totalTemplate = `
    Total copied:                              {{.TotalCopied}}
@@ -41,14 +49,15 @@ func printTotals(res copyResult) {
 	report.Execute(os.Stdout, res)
 }
 
-func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase string, targetBase string, verbose bool, copyFunc func(src, dst string) error) copyResult {
+func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase string, targetBase string, verbose bool, copyFunc func(src, dst string) error) (copyResult, []string) {
 
 	sourcesTree, targetsTree := createTrees(sourceCh, targetCh)
 
 	var result copyResult
+	var missing []string
 
 	if sourcesTree.Len() == 0 || targetsTree.Len() == 0 {
-		return result
+		return result, missing
 	}
 
 	targetsTree.Ascend(func(c *rbtree.Comparable) bool {
@@ -58,7 +67,7 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 			normalizedTgt := strings.Replace(tgt, targetBase, "", 1)
 			if !ok {
 				result.NotFoundInSource++
-				fmt.Printf("   File '%s' not found in source\n", normalizedTgt)
+				missing = append(missing, normalizedTgt)
 				continue
 			}
 
@@ -79,14 +88,14 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 			}
 			if !found {
 				result.NotFoundInSource++
-				fmt.Printf("   File '%s' not found in source\n", normalizedTgt)
+				missing = append(missing, normalizedTgt)
 			}
 		}
 
 		return true
 	})
 
-	return result
+	return result, missing
 }
 
 func createTrees(sourceCh <-chan *string, targetCh <-chan *string) (*rbtree.RbTree, *rbtree.RbTree) {
