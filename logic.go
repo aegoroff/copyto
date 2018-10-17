@@ -55,11 +55,13 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 		node := (*c).(fileTreeNode)
 		for _, tgt := range node.paths {
 			sources, ok := getFilePathsFromTree(sourcesTree, node.name)
+			normalizedTgt := strings.Replace(tgt, targetBase, "", 1)
 			if !ok {
 				result.NotFoundInSource++
+				fmt.Printf("   File '%s' not found in source\n", normalizedTgt)
 				continue
 			}
-			normalizedTgt := strings.Replace(tgt, targetBase, "", 1)
+
 			found := false
 			for _, src := range sources {
 				normalizedSrc := strings.Replace(src, sourceBase, "", 1)
@@ -77,6 +79,7 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 			}
 			if !found {
 				result.NotFoundInSource++
+				fmt.Printf("   File '%s' not found in source\n", normalizedTgt)
 			}
 		}
 

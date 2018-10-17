@@ -87,7 +87,7 @@ func configcmd(opt options) error {
 
 	for k, v := range config.Definitions {
 		source := findSource(v, config.Sources)
-		fmt.Printf(" Section: %s\n Source: %s\n Target: %s", k, source, v.Target)
+		fmt.Printf(" Section: %s\n Source: %s\n Target: %s\n", k, source, v.Target)
 		coptyfiletree(source, v.Target, opt.Verbose)
 	}
 
