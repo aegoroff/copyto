@@ -84,7 +84,7 @@ func commandlinecmd(opt options, fs afero.Fs) error {
 
 func configcmd(opt options, fs afero.Fs) error {
 	var config tomlConfig
-	if _, err := toml.DecodeFile(opt.Config.Path, &config); err != nil {
+	if _, err := decodeConfig(opt.Config.Path, fs, &config); err != nil {
 		return err
 	}
 
@@ -95,6 +95,14 @@ func configcmd(opt options, fs afero.Fs) error {
 	}
 
 	return nil
+}
+
+func decodeConfig(fpath string, fs afero.Fs, v interface{}) (toml.MetaData, error) {
+	bs, err := afero.ReadFile(fs, fpath)
+	if err != nil {
+		return toml.MetaData{}, err
+	}
+	return toml.Decode(string(bs), v)
 }
 
 func findSource(def definition, sources map[string]source) string {
