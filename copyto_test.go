@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func Test_configcmd(t *testing.T) {
+func Test_commandlinecmd(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
 	appFS := afero.NewMemMapFs()
@@ -29,7 +29,7 @@ func Test_configcmd(t *testing.T) {
 	ass.Equal("/s/p1/f1.txt", string(bytes))
 }
 
-func Test_commandlinecmd(t *testing.T) {
+func Test_configcmd(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
 	appFS := afero.NewMemMapFs()
