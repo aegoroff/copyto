@@ -243,6 +243,32 @@ func Test_copyTreeDifferentCase_DifferentCaseFilesCopied(t *testing.T) {
 	ass.Equal("/s/p1/f1.txt", string(bytes1))
 }
 
+func Test_copyTreeVerboseTrue_EachCopiedFileOutput(t *testing.T) {
+	// Arrange
+	ass := assert.New(t)
+
+	appFS := afero.NewMemMapFs()
+
+	appFS.MkdirAll("s/p1", 0755)
+	appFS.MkdirAll("t/p1", 0755)
+
+	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "t/p1/F1.txt", []byte("/t/p1/F1.txt"), 0644)
+
+	buf := bytes.NewBufferString("")
+
+	// Act
+	coptyfiletree("s", "t", appFS, buf, true)
+
+	// Assert
+	ass.Equal(`[s\p1\f1.txt] copied to [t\p1\F1.txt]
+
+   Total copied:                              1
+   Present in target but not found in source: 0
+
+`, buf.String())
+}
+
 func Test_copyTreeUnexistTarget_NoFilesCopied(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
