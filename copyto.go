@@ -70,7 +70,7 @@ func main() {
 
 	var osFs = afero.NewOsFs()
 
-	if cmd, found := commands[opt.Verbs]; found {
+	if cmd, ok := commands[opt.Verbs]; ok {
 		err := cmd(opt, osFs, os.Stdout)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "error:", err)
