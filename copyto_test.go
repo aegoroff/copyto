@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -21,12 +22,19 @@ func Test_commandlinecmd(t *testing.T) {
 	opt.CmdLine.Source = "s"
 	opt.CmdLine.Target = "t"
 
+	buf := bytes.NewBufferString("")
+
 	// Act
-	commandlinecmd(opt, appFS)
+	commandlinecmd(opt, appFS, buf)
 
 	// Assert
-	bytes, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
-	ass.Equal("/s/p1/f1.txt", string(bytes))
+	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
+	ass.Equal("/s/p1/f1.txt", string(b))
+	ass.Equal(`
+   Total copied:                              1
+   Present in target but not found in source: 0
+
+`, buf.String())
 }
 
 func Test_configcmd(t *testing.T) {
@@ -63,12 +71,14 @@ title = "test"
 	opt := options{}
 	opt.Config.Path = "c/config.toml"
 
+	buf := bytes.NewBufferString("")
+
 	// Act
-	configcmd(opt, appFS)
+	configcmd(opt, appFS, buf)
 
 	// Assert
-	bytes, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
-	ass.Equal("/s/p1/f1.txt", string(bytes))
+	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
+	ass.Equal("/s/p1/f1.txt", string(b))
 }
 
 func Test_configcmdSourceKeyMismatch_NothingCopied(t *testing.T) {
@@ -101,12 +111,14 @@ title = "test"
 	opt := options{}
 	opt.Config.Path = "c/config.toml"
 
+	buf := bytes.NewBufferString("")
+
 	// Act
-	configcmd(opt, appFS)
+	configcmd(opt, appFS, buf)
 
 	// Assert
-	bytes, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
-	ass.Equal("/t/p1/f1.txt", string(bytes))
+	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
+	ass.Equal("/t/p1/f1.txt", string(b))
 }
 
 func Test_configcmdInvalidConfig(t *testing.T) {
@@ -132,12 +144,14 @@ title = "test"
 	opt := options{}
 	opt.Config.Path = "c/config.toml"
 
+	buf := bytes.NewBufferString("")
+
 	// Act
-	configcmd(opt, appFS)
+	configcmd(opt, appFS, buf)
 
 	// Assert
-	bytes, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
-	ass.Equal("/t/p1/f1.txt", string(bytes))
+	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
+	ass.Equal("/t/p1/f1.txt", string(b))
 }
 
 func Test_configcmdUnexistConfig(t *testing.T) {
@@ -154,10 +168,12 @@ func Test_configcmdUnexistConfig(t *testing.T) {
 	opt := options{}
 	opt.Config.Path = "c/config.toml"
 
+	buf := bytes.NewBufferString("")
+
 	// Act
-	configcmd(opt, appFS)
+	configcmd(opt, appFS, buf)
 
 	// Assert
-	bytes, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
-	ass.Equal("/t/p1/f1.txt", string(bytes))
+	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
+	ass.Equal("/t/p1/f1.txt", string(b))
 }

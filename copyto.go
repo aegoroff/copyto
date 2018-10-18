@@ -5,6 +5,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/spf13/afero"
 	"github.com/voxelbrain/goptions"
+	"io"
 	"os"
 )
 
@@ -26,7 +27,7 @@ type options struct {
 	} `goptions:"config"`
 }
 
-type command func(options, afero.Fs) error
+type command func(options, afero.Fs, io.Writer) error
 
 type tomlConfig struct {
 	Title       string
@@ -67,10 +68,10 @@ func main() {
 		return
 	}
 
-	var appFs = afero.NewOsFs()
+	var osFs = afero.NewOsFs()
 
 	if cmd, found := commands[opt.Verbs]; found {
-		err := cmd(opt, appFs)
+		err := cmd(opt, osFs, os.Stdout)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "error:", err)
 			os.Exit(1)
@@ -78,11 +79,11 @@ func main() {
 	}
 }
 
-func commandlinecmd(opt options, fs afero.Fs) error {
-	return coptyfiletree(opt.CmdLine.Source, opt.CmdLine.Target, fs, opt.Verbose)
+func commandlinecmd(opt options, fs afero.Fs, w io.Writer) error {
+	return coptyfiletree(opt.CmdLine.Source, opt.CmdLine.Target, fs, w, opt.Verbose)
 }
 
-func configcmd(opt options, fs afero.Fs) error {
+func configcmd(opt options, fs afero.Fs, w io.Writer) error {
 	var config tomlConfig
 	if _, err := decodeConfig(opt.Config.Path, fs, &config); err != nil {
 		return err
@@ -90,8 +91,8 @@ func configcmd(opt options, fs afero.Fs) error {
 
 	for k, v := range config.Definitions {
 		source := findSource(v, config.Sources)
-		fmt.Printf(" Section: %s\n Source: %s\n Target: %s\n", k, source, v.Target)
-		coptyfiletree(source, v.Target, fs, opt.Verbose)
+		fmt.Fprintf(w, " Section: %s\n Source: %s\n Target: %s\n", k, source, v.Target)
+		coptyfiletree(source, v.Target, fs, w, opt.Verbose)
 	}
 
 	return nil

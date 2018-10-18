@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/aegoroff/godatastruct/rbtree"
 	"github.com/spf13/afero"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -16,7 +17,7 @@ type copyResult struct {
 	NotFoundInSource int64
 }
 
-func coptyfiletree(source, target string, fs afero.Fs, verbose bool) error {
+func coptyfiletree(source, target string, fs afero.Fs, w io.Writer, verbose bool) error {
 
 	srcCh := make(chan *string, 1024)
 	tgtCh := make(chan *string, 1024)
@@ -24,20 +25,20 @@ func coptyfiletree(source, target string, fs afero.Fs, verbose bool) error {
 	go readDirectory(source, fs, srcCh)
 	go readDirectory(target, fs, tgtCh)
 
-	res, missing := copyTree(srcCh, tgtCh, source, target, verbose, fs)
-	printTotals(res, missing)
+	res, missing := copyTree(srcCh, tgtCh, source, target, verbose, fs, w)
+	printTotals(res, missing, w)
 
 	return nil
 }
 
-func printTotals(res copyResult, missing []string) {
+func printTotals(res copyResult, missing []string, w io.Writer) {
 
 	if len(missing) > 0 {
-		fmt.Println("   Found files that present in target but missing in source:")
+		fmt.Fprintf(w, "   Found files that present in target but missing in source:\n")
 	}
 
 	for _, f := range missing {
-		fmt.Printf("     %s\n", f)
+		fmt.Fprintf(w, "     %s\n", f)
 	}
 
 	const totalTemplate = `
@@ -47,10 +48,10 @@ func printTotals(res copyResult, missing []string) {
 `
 
 	var report = template.Must(template.New("copyResult").Parse(totalTemplate))
-	report.Execute(os.Stdout, res)
+	report.Execute(w, res)
 }
 
-func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase string, targetBase string, verbose bool, fs afero.Fs) (copyResult, []string) {
+func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase string, targetBase string, verbose bool, fs afero.Fs, w io.Writer) (copyResult, []string) {
 
 	sourcesTree, targetsTree := createTrees(sourceCh, targetCh)
 
@@ -80,7 +81,7 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 					if err := copyFile(src, tgt, fs); err != nil {
 						log.Printf("%v", err)
 					} else if verbose {
-						fmt.Printf("[%s] copied to [%s]\n", src, tgt)
+						fmt.Fprintf(w, "[%s] copied to [%s]\n", src, tgt)
 					}
 					result.TotalCopied++
 					found = true
