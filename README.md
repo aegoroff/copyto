@@ -85,6 +85,9 @@ title = "Exaample sync"
 ```
 **IMPORTANT:** So as not to write double back slashes on Windows use string in '(apos) instead of "(quote).
 
+You can use one source for several definitions using it's key (string after dot in square brackets) as value of *sourceLink* option. If both *source* and *sourceLink* defined in the
+same definition *source* option wins.
+
 And then use it using config verb:
 ```
 copyto config -p D:\example.toml
