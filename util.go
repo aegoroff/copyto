@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"github.com/spf13/afero"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sort"
 )
 
-func walkDirBreadthFirst(path string, action func(parent string, entry os.FileInfo)) {
+func walkDirBreadthFirst(path string, fs afero.Fs, action func(parent string, entry os.FileInfo)) {
 	queue := make([]string, 0)
 
 	queue = append(queue, path)
@@ -16,7 +17,7 @@ func walkDirBreadthFirst(path string, action func(parent string, entry os.FileIn
 	for len(queue) > 0 {
 		curr := queue[0]
 
-		for _, entry := range dirents(curr) {
+		for _, entry := range dirents(curr, fs) {
 			action(curr, entry)
 			if entry.IsDir() {
 				queue = append(queue, filepath.Join(curr, entry.Name()))
@@ -27,8 +28,8 @@ func walkDirBreadthFirst(path string, action func(parent string, entry os.FileIn
 	}
 }
 
-func dirents(path string) []os.FileInfo {
-	entries, err := ioutil.ReadDir(path)
+func dirents(path string, fs afero.Fs) []os.FileInfo {
+	entries, err := ReadDir(path, fs)
 	if err != nil {
 		return nil
 	}
@@ -36,8 +37,8 @@ func dirents(path string) []os.FileInfo {
 	return entries
 }
 
-func copyFile(src, dst string) error {
-	sourceFileStat, err := os.Stat(src)
+func copyFile(src, dst string, fs afero.Fs) error {
+	sourceFileStat, err := fs.Stat(src)
 	if err != nil {
 		return err
 	}
@@ -46,17 +47,33 @@ func copyFile(src, dst string) error {
 		return fmt.Errorf("%s is not a regular file", src)
 	}
 
-	source, err := os.Open(src)
+	source, err := fs.Open(src)
 	if err != nil {
 		return err
 	}
 	defer source.Close()
 
-	destination, err := os.Create(dst)
+	destination, err := fs.Create(dst)
 	if err != nil {
 		return err
 	}
 	defer destination.Close()
 	_, err = io.Copy(destination, source)
 	return err
+}
+
+// ReadDir reads the directory named by dirname and returns
+// a list of directory entries sorted by filename.
+func ReadDir(dirname string, fs afero.Fs) ([]os.FileInfo, error) {
+	f, err := fs.Open(dirname)
+	if err != nil {
+		return nil, err
+	}
+	list, err := f.Readdir(-1)
+	f.Close()
+	if err != nil {
+		return nil, err
+	}
+	sort.Slice(list, func(i, j int) bool { return list[i].Name() < list[j].Name() })
+	return list, nil
 }

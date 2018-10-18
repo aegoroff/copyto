@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/aegoroff/godatastruct/rbtree"
+	"github.com/spf13/afero"
 	"log"
 	"os"
 	"path/filepath"
@@ -15,15 +16,15 @@ type copyResult struct {
 	NotFoundInSource int64
 }
 
-func coptyfiletree(source, target string, verbose bool) error {
+func coptyfiletree(source, target string, fs afero.Fs, verbose bool) error {
 
 	srcCh := make(chan *string, 1024)
 	tgtCh := make(chan *string, 1024)
 
-	go readDirectory(source, srcCh)
-	go readDirectory(target, tgtCh)
+	go readDirectory(source, fs, srcCh)
+	go readDirectory(target, fs, tgtCh)
 
-	res, missing := copyTree(srcCh, tgtCh, source, target, verbose, copyFile)
+	res, missing := copyTree(srcCh, tgtCh, source, target, verbose, fs)
 	printTotals(res, missing)
 
 	return nil
@@ -49,7 +50,7 @@ func printTotals(res copyResult, missing []string) {
 	report.Execute(os.Stdout, res)
 }
 
-func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase string, targetBase string, verbose bool, copyFunc func(src, dst string) error) (copyResult, []string) {
+func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase string, targetBase string, verbose bool, fs afero.Fs) (copyResult, []string) {
 
 	sourcesTree, targetsTree := createTrees(sourceCh, targetCh)
 
@@ -76,7 +77,7 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 				normalizedSrc := strings.Replace(src, sourceBase, "", 1)
 
 				if strings.EqualFold(normalizedTgt, normalizedSrc) {
-					if err := copyFunc(src, tgt); err != nil {
+					if err := copyFile(src, tgt, fs); err != nil {
 						log.Printf("%v", err)
 					} else if verbose {
 						fmt.Printf("[%s] copied to [%s]\n", src, tgt)
@@ -128,8 +129,8 @@ func createTrees(sourceCh <-chan *string, targetCh <-chan *string) (*rbtree.RbTr
 	return sourcesTree, targetsTree
 }
 
-func readDirectory(dir string, ch chan<- *string) {
-	walkDirBreadthFirst(dir, func(parent string, entry os.FileInfo) {
+func readDirectory(dir string, fs afero.Fs, ch chan<- *string) {
+	walkDirBreadthFirst(dir, fs, func(parent string, entry os.FileInfo) {
 		if entry.IsDir() {
 			return
 		}

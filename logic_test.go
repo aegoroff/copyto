@@ -1,303 +1,210 @@
 package main
 
 import (
+	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
+	"os"
 	"testing"
 )
 
-func Test_copyTreeAllTargetFilesPresentInSource_AllCopied(t *testing.T) {
+func Test_coptyfiletreeAllTargetFilesPresentInSource_AllCopied(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
+	appFS := afero.NewMemMapFs()
 
-	srcCh := make(chan *string, 10)
-	tgtCh := make(chan *string, 10)
+	appFS.MkdirAll("s/p1", 0755)
+	appFS.MkdirAll("s/p1/p2", 0755)
+	appFS.MkdirAll("t/p1", 0755)
+	appFS.MkdirAll("t/p1/p2", 0755)
 
-	go func(sch chan<- *string, tch chan<- *string) {
-		src := []string{"/s/p1/f1.txt", "/s/p1/f2.txt", "/s/p1/p2/f1.txt", "/s/p1/p2/f2.txt"}
-		tgt := []string{"/t/p1/f1.txt", "/t/p1/f2.txt", "/t/p1/p2/f1.txt", "/t/p1/p2/f2.txt"}
+	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "s/p1/f2.txt", []byte("/s/p1/f2.txt"), 0644)
+	afero.WriteFile(appFS, "s/p1/p2/f1.txt", []byte("/s/p1/p2/f1.txt"), 0644)
+	afero.WriteFile(appFS, "s/p1/p2/f2.txt", []byte("/s/p1/p2/f2.txt"), 0644)
 
-		for _, s := range src {
-			tmp := s
-			sch <- &tmp
-		}
-		close(sch)
-		for _, t := range tgt {
-			tmp := t
-			tch <- &tmp
-		}
-		close(tch)
-	}(srcCh, tgtCh)
-
-	result := make(map[string]string)
+	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
+	afero.WriteFile(appFS, "t/p1/p2/f1.txt", []byte("/t/p1/p2/f1.txt"), 0644)
+	afero.WriteFile(appFS, "t/p1/p2/f2.txt", []byte("/t/p1/p2/f2.txt"), 0644)
 
 	// Act
-	r, _ := copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
-		result[dst] = src
-		return nil
-	})
+	coptyfiletree("s", "t", appFS, false)
 
 	// Assert
-	ass.Equal(4, len(result))
-	ass.Equal("/s/p1/f1.txt", result["/t/p1/f1.txt"])
-	ass.Equal("/s/p1/f2.txt", result["/t/p1/f2.txt"])
-	ass.Equal("/s/p1/p2/f1.txt", result["/t/p1/p2/f1.txt"])
-	ass.Equal("/s/p1/p2/f2.txt", result["/t/p1/p2/f2.txt"])
-	ass.Equal(int64(4), r.TotalCopied)
-	ass.Equal(int64(0), r.NotFoundInSource)
+	bytes1, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
+	bytes2, _ := afero.ReadFile(appFS, "t/p1/f2.txt")
+	bytes3, _ := afero.ReadFile(appFS, "t/p1/p2/f1.txt")
+	bytes4, _ := afero.ReadFile(appFS, "t/p1/p2/f2.txt")
+
+	ass.Equal("/s/p1/f1.txt", string(bytes1))
+	ass.Equal("/s/p1/f2.txt", string(bytes2))
+	ass.Equal("/s/p1/p2/f1.txt", string(bytes3))
+	ass.Equal("/s/p1/p2/f2.txt", string(bytes4))
 }
 
 func Test_copyTreeSourcesMoreThenTargets_OnlyMathesCopiedFromSources(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
 
-	srcCh := make(chan *string, 10)
-	tgtCh := make(chan *string, 10)
+	appFS := afero.NewMemMapFs()
 
-	go func(sch chan<- *string, tch chan<- *string) {
-		src := []string{"/s/p1/f1.txt", "/s/p1/f2.txt", "/s/p1/p2/f1.txt", "/s/p1/p2/f2.txt"}
-		tgt := []string{"/t/p1/f1.txt", "/t/p1/f2.txt"}
+	appFS.MkdirAll("s/p1", 0755)
+	appFS.MkdirAll("s/p1/p2", 0755)
+	appFS.MkdirAll("t/p1", 0755)
 
-		for _, s := range src {
-			tmp := s
-			sch <- &tmp
-		}
-		close(sch)
-		for _, t := range tgt {
-			tmp := t
-			tch <- &tmp
-		}
-		close(tch)
-	}(srcCh, tgtCh)
+	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "s/p1/f2.txt", []byte("/s/p1/f2.txt"), 0644)
+	afero.WriteFile(appFS, "s/p1/p2/f1.txt", []byte("/s/p1/p2/f1.txt"), 0644)
+	afero.WriteFile(appFS, "s/p1/p2/f2.txt", []byte("/s/p1/p2/f2.txt"), 0644)
 
-	result := make(map[string]string)
+	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
 	// Act
-	r, _ := copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
-		result[dst] = src
-		return nil
-	})
+	coptyfiletree("s", "t", appFS, false)
 
 	// Assert
-	ass.Equal(2, len(result))
-	ass.Equal("/s/p1/f1.txt", result["/t/p1/f1.txt"])
-	ass.Equal("/s/p1/f2.txt", result["/t/p1/f2.txt"])
-	ass.Equal(int64(2), r.TotalCopied)
-	ass.Equal(int64(0), r.NotFoundInSource)
+	bytes1, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
+	bytes2, _ := afero.ReadFile(appFS, "t/p1/f2.txt")
+
+	ass.Equal("/s/p1/f1.txt", string(bytes1))
+	ass.Equal("/s/p1/f2.txt", string(bytes2))
+	_, err1 := appFS.Stat("t/p1/p2/f1.txt")
+	_, err2 := appFS.Stat("t/p1/p2/f2.txt")
+	ass.True(os.IsNotExist(err1))
+	ass.True(os.IsNotExist(err2))
 }
 
 func Test_copyTreeTargetsContainMissingSourcesElements_OnlyFoundCopiedFromSources(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
+	appFS := afero.NewMemMapFs()
 
-	srcCh := make(chan *string, 10)
-	tgtCh := make(chan *string, 10)
+	appFS.MkdirAll("s/p1", 0755)
+	appFS.MkdirAll("t/p1", 0755)
 
-	go func(sch chan<- *string, tch chan<- *string) {
-		src := []string{"/s/p1/f1.txt"}
-		tgt := []string{"/t/p1/f1.txt", "/t/p1/f2.txt"}
+	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
 
-		for _, s := range src {
-			tmp := s
-			sch <- &tmp
-		}
-		close(sch)
-		for _, t := range tgt {
-			tmp := t
-			tch <- &tmp
-		}
-		close(tch)
-	}(srcCh, tgtCh)
-
-	result := make(map[string]string)
+	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
 	// Act
-	r, _ := copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
-		result[dst] = src
-		return nil
-	})
+	coptyfiletree("s", "t", appFS, false)
 
 	// Assert
-	ass.Equal(1, len(result))
-	ass.Equal("/s/p1/f1.txt", result["/t/p1/f1.txt"])
-	ass.Equal(int64(1), r.TotalCopied)
-	ass.Equal(int64(1), r.NotFoundInSource)
+	bytes1, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
+	bytes2, _ := afero.ReadFile(appFS, "t/p1/f2.txt")
+	ass.Equal("/s/p1/f1.txt", string(bytes1))
+	ass.Equal("/t/p1/f2.txt", string(bytes2))
 }
 
 func Test_copyTreeSourcesContainsSameNameFilesButInSubfolders_OnlyExactMatchedCopiedFromSources(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
 
-	srcCh := make(chan *string, 10)
-	tgtCh := make(chan *string, 10)
+	appFS := afero.NewMemMapFs()
 
-	go func(sch chan<- *string, tch chan<- *string) {
-		src := []string{"/s/p1/f1.txt", "/s/p1/p2/f2.txt"}
-		tgt := []string{"/t/p1/f1.txt", "/t/p1/f2.txt"}
+	appFS.MkdirAll("s/p1", 0755)
+	appFS.MkdirAll("s/p1/p2", 0755)
+	appFS.MkdirAll("t/p1", 0755)
 
-		for _, s := range src {
-			tmp := s
-			sch <- &tmp
-		}
-		close(sch)
-		for _, t := range tgt {
-			tmp := t
-			tch <- &tmp
-		}
-		close(tch)
-	}(srcCh, tgtCh)
+	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "s/p1/p2/f2.txt", []byte("/s/p1/p2/f2.txt"), 0644)
 
-	result := make(map[string]string)
+	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
 	// Act
-	copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
-		result[dst] = src
-		return nil
-	})
+	coptyfiletree("s", "t", appFS, false)
 
 	// Assert
-	ass.Equal(1, len(result))
-	ass.Equal("/s/p1/f1.txt", result["/t/p1/f1.txt"])
+	bytes1, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
+	bytes2, _ := afero.ReadFile(appFS, "t/p1/f2.txt")
+	ass.Equal("/s/p1/f1.txt", string(bytes1))
+	ass.Equal("/t/p1/f2.txt", string(bytes2))
 }
 
 func Test_copyTreeSourcesContainsNoMatchingFiles_NothingCopied(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
 
-	srcCh := make(chan *string, 10)
-	tgtCh := make(chan *string, 10)
+	appFS := afero.NewMemMapFs()
 
-	go func(sch chan<- *string, tch chan<- *string) {
-		src := []string{"/s/p1/f3.txt"}
-		tgt := []string{"/t/p1/f1.txt", "/t/p1/f2.txt"}
+	appFS.MkdirAll("s/p1", 0755)
+	appFS.MkdirAll("t/p1", 0755)
 
-		for _, s := range src {
-			tmp := s
-			sch <- &tmp
-		}
-		close(sch)
-		for _, t := range tgt {
-			tmp := t
-			tch <- &tmp
-		}
-		close(tch)
-	}(srcCh, tgtCh)
+	afero.WriteFile(appFS, "s/p1/f3.txt", []byte("/s/p1/f3.txt"), 0644)
 
-	result := make(map[string]string)
+	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
 	// Act
-	r, _ := copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
-		result[dst] = src
-		return nil
-	})
+	coptyfiletree("s", "t", appFS, false)
 
 	// Assert
-	ass.Equal(0, len(result))
-	ass.Equal(int64(0), r.TotalCopied)
-	ass.Equal(int64(2), r.NotFoundInSource)
+	bytes1, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
+	bytes2, _ := afero.ReadFile(appFS, "t/p1/f2.txt")
+	ass.Equal("/t/p1/f1.txt", string(bytes1))
+	ass.Equal("/t/p1/f2.txt", string(bytes2))
 }
 
 func Test_copyTreeEmptySources_NothingCopied(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
 
-	srcCh := make(chan *string, 10)
-	tgtCh := make(chan *string, 10)
+	appFS := afero.NewMemMapFs()
 
-	go func(sch chan<- *string, tch chan<- *string) {
-		src := []string{}
-		tgt := []string{"/t/p1/f1.txt", "/t/p1/f2.txt"}
+	appFS.MkdirAll("s/p1", 0755)
+	appFS.MkdirAll("t/p1", 0755)
 
-		for _, s := range src {
-			tmp := s
-			sch <- &tmp
-		}
-		close(sch)
-		for _, t := range tgt {
-			tmp := t
-			tch <- &tmp
-		}
-		close(tch)
-	}(srcCh, tgtCh)
-
-	result := make(map[string]string)
+	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
 	// Act
-	copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
-		result[dst] = src
-		return nil
-	})
+	coptyfiletree("s", "t", appFS, false)
 
 	// Assert
-	ass.Equal(0, len(result))
+	bytes1, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
+	bytes2, _ := afero.ReadFile(appFS, "t/p1/f2.txt")
+	ass.Equal("/t/p1/f1.txt", string(bytes1))
+	ass.Equal("/t/p1/f2.txt", string(bytes2))
 }
 
 func Test_copyTreeEmptyTargets_NothingCopied(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
 
-	srcCh := make(chan *string, 10)
-	tgtCh := make(chan *string, 10)
+	appFS := afero.NewMemMapFs()
 
-	go func(sch chan<- *string, tch chan<- *string) {
-		src := []string{"/s/p1/f3.txt"}
-		tgt := []string{}
+	appFS.MkdirAll("s/p1", 0755)
+	appFS.MkdirAll("t/p1", 0755)
 
-		for _, s := range src {
-			tmp := s
-			sch <- &tmp
-		}
-		close(sch)
-		for _, t := range tgt {
-			tmp := t
-			tch <- &tmp
-		}
-		close(tch)
-	}(srcCh, tgtCh)
-
-	result := make(map[string]string)
+	afero.WriteFile(appFS, "s/p1/f3.txt", []byte("/s/p1/f3.txt"), 0644)
 
 	// Act
-	copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
-		result[dst] = src
-		return nil
-	})
+	coptyfiletree("s", "t", appFS, false)
 
 	// Assert
-	ass.Equal(0, len(result))
+	items, _ := afero.ReadDir(appFS, "t/p1")
+	ass.Equal(0, len(items))
 }
 
 func Test_copyTreeDifferentCase_DifferentCaseFilesCopied(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
 
-	srcCh := make(chan *string, 10)
-	tgtCh := make(chan *string, 10)
+	appFS := afero.NewMemMapFs()
 
-	go func(sch chan<- *string, tch chan<- *string) {
-		src := []string{"/s/p1/f1.txt"}
-		tgt := []string{"/t/p1/F1.txt"}
+	appFS.MkdirAll("s/p1", 0755)
+	appFS.MkdirAll("t/p1", 0755)
 
-		for _, s := range src {
-			tmp := s
-			sch <- &tmp
-		}
-		close(sch)
-		for _, t := range tgt {
-			tmp := t
-			tch <- &tmp
-		}
-		close(tch)
-	}(srcCh, tgtCh)
-
-	result := make(map[string]string)
+	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "t/p1/F1.txt", []byte("/t/p1/F1.txt"), 0644)
 
 	// Act
-	copyTree(srcCh, tgtCh, "/s", "/t", false, func(src, dst string) error {
-		result[dst] = src
-		return nil
-	})
+	coptyfiletree("s", "t", appFS, false)
 
 	// Assert
-	ass.Equal(1, len(result))
-	ass.Equal("/s/p1/f1.txt", result["/t/p1/F1.txt"])
+	bytes1, _ := afero.ReadFile(appFS, "t/p1/F1.txt")
+	ass.Equal("/s/p1/f1.txt", string(bytes1))
 }
