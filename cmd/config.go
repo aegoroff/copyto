@@ -41,7 +41,7 @@ var configCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(configCmd)
 
-	configCmd.Flags().StringVarP(&cfg, "path", "p", "", "Path to configuration file")
+	configCmd.Flags().StringVarP(&cfg, "path", "p", "", "Path to configuration file (required)")
 	configCmd.MarkFlagRequired("path")
 }
 

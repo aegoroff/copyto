@@ -28,8 +28,8 @@ func runCommandLineCmd(fs afero.Fs, w io.Writer) error {
 func init() {
 	rootCmd.AddCommand(cmdlineCmd)
 
-	cmdlineCmd.Flags().StringVarP(&src, "source", "s", "", "Path to the source folder, to copy (sync) data from")
-	cmdlineCmd.Flags().StringVarP(&tgt, "target", "t", "", "Path to the target folder, to copy (sync) data to")
+	cmdlineCmd.Flags().StringVarP(&src, "source", "s", "", "Path to the source folder, to copy (sync) data from (required)")
+	cmdlineCmd.Flags().StringVarP(&tgt, "target", "t", "", "Path to the target folder, to copy (sync) data to (required)")
 	cmdlineCmd.MarkFlagRequired("source")
 	cmdlineCmd.MarkFlagRequired("target")
 }
