@@ -26,7 +26,7 @@ var cmdlineCmd = &cobra.Command{
 }
 
 func runCommandLineCmd(src string, tgt string, fs afero.Fs, w io.Writer) error {
-	return logic.CoptyFileTree(src, tgt, fs, w, Verbose)
+	return logic.CopyFileTree(src, tgt, fs, w, Verbose)
 }
 
 func init() {

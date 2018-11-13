@@ -31,7 +31,7 @@ func Test_coptyfiletreeAllTargetFilesPresentInSource_AllCopied(t *testing.T) {
 	buf := bytes.NewBufferString("")
 
 	// Act
-	CoptyFileTree("s", "t", appFS, buf, false)
+	CopyFileTree("s", "t", appFS, buf, false)
 
 	// Assert
 	bytes1, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
@@ -71,7 +71,7 @@ func Test_copyTreeSourcesMoreThenTargets_OnlyMathesCopiedFromSources(t *testing.
 	buf := bytes.NewBufferString("")
 
 	// Act
-	CoptyFileTree("s", "t", appFS, buf, false)
+	CopyFileTree("s", "t", appFS, buf, false)
 
 	// Assert
 	bytes1, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
@@ -106,7 +106,7 @@ func Test_copyTreeTargetsContainMissingSourcesElements_OnlyFoundCopiedFromSource
 	buf := bytes.NewBufferString("")
 
 	// Act
-	CoptyFileTree("s", "t", appFS, buf, false)
+	CopyFileTree("s", "t", appFS, buf, false)
 
 	// Assert
 	bytes1, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
@@ -141,7 +141,7 @@ func Test_copyTreeSourcesContainsSameNameFilesButInSubfolders_OnlyExactMatchedCo
 	buf := bytes.NewBufferString("")
 
 	// Act
-	CoptyFileTree("s", "t", appFS, buf, false)
+	CopyFileTree("s", "t", appFS, buf, false)
 
 	// Assert
 	bytes1, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
@@ -167,7 +167,7 @@ func Test_copyTreeSourcesContainsNoMatchingFiles_NothingCopied(t *testing.T) {
 	buf := bytes.NewBufferString("")
 
 	// Act
-	CoptyFileTree("s", "t", appFS, buf, false)
+	CopyFileTree("s", "t", appFS, buf, false)
 
 	// Assert
 	bytes1, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
@@ -191,7 +191,7 @@ func Test_copyTreeEmptySources_NothingCopied(t *testing.T) {
 	buf := bytes.NewBufferString("")
 
 	// Act
-	CoptyFileTree("s", "t", appFS, buf, false)
+	CopyFileTree("s", "t", appFS, buf, false)
 
 	// Assert
 	bytes1, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
@@ -214,7 +214,7 @@ func Test_copyTreeEmptyTargets_NothingCopied(t *testing.T) {
 	buf := bytes.NewBufferString("")
 
 	// Act
-	CoptyFileTree("s", "t", appFS, buf, false)
+	CopyFileTree("s", "t", appFS, buf, false)
 
 	// Assert
 	items, _ := afero.ReadDir(appFS, "t/p1")
@@ -236,7 +236,7 @@ func Test_copyTreeDifferentCase_DifferentCaseFilesCopied(t *testing.T) {
 	buf := bytes.NewBufferString("")
 
 	// Act
-	CoptyFileTree("s", "t", appFS, buf, false)
+	CopyFileTree("s", "t", appFS, buf, false)
 
 	// Assert
 	bytes1, _ := afero.ReadFile(appFS, "t/p1/F1.txt")
@@ -258,7 +258,7 @@ func Test_copyTreeVerboseTrue_EachCopiedFileOutput(t *testing.T) {
 	buf := bytes.NewBufferString("")
 
 	// Act
-	CoptyFileTree("s", "t", appFS, buf, true)
+	CopyFileTree("s", "t", appFS, buf, true)
 
 	// Assert
 	ass.Equal(`[s\p1\f1.txt] copied to [t\p1\F1.txt]
@@ -284,7 +284,7 @@ func Test_copyTreeUnexistTarget_NoFilesCopied(t *testing.T) {
 	buf := bytes.NewBufferString("")
 
 	// Act
-	CoptyFileTree("s", "t1", appFS, buf, false)
+	CopyFileTree("s", "t1", appFS, buf, false)
 
 	// Assert
 	bytes1, _ := afero.ReadFile(appFS, "t/p1/F1.txt")

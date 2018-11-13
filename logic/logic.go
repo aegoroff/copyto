@@ -17,8 +17,8 @@ type copyResult struct {
 	NotFoundInSource int64
 }
 
-// CoptyFileTree does files tree coping
-func CoptyFileTree(source, target string, fs afero.Fs, w io.Writer, verbose bool) error {
+// CopyFileTree does files tree coping
+func CopyFileTree(source, target string, fs afero.Fs, w io.Writer, verbose bool) error {
 
 	srcCh := make(chan *string, 1024)
 	tgtCh := make(chan *string, 1024)

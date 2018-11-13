@@ -55,7 +55,7 @@ func runConfigCmd(path string, fs afero.Fs, w io.Writer) error {
 	for k, v := range config.Definitions {
 		source := findSource(v, config.Sources)
 		fmt.Fprintf(w, " Section: %s\n Source: %s\n Target: %s\n", k, source, v.Target)
-		logic.CoptyFileTree(source, v.Target, fs, w, Verbose)
+		logic.CopyFileTree(source, v.Target, fs, w, Verbose)
 	}
 
 	return nil
