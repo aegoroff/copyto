@@ -26,7 +26,7 @@ type definition struct {
 	Target     string
 }
 
-const PathParamName = "path"
+const pathParamName = "path"
 
 // configCmd represents the config command
 var configCmd = &cobra.Command{
@@ -34,7 +34,7 @@ var configCmd = &cobra.Command{
 	Aliases: []string{"conf", "c"},
 	Short:   "Use TOML configuration file to configure required application parameters",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		path := cmd.Flag(PathParamName)
+		path := cmd.Flag(pathParamName)
 		var osFs = afero.NewOsFs()
 		return runConfigCmd(path.Value.String(), osFs, os.Stdout)
 	},
@@ -43,8 +43,8 @@ var configCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(configCmd)
 
-	configCmd.Flags().StringP(PathParamName, "p", "", "Path to configuration file (required)")
-	configCmd.MarkFlagRequired(PathParamName)
+	configCmd.Flags().StringP(pathParamName, "p", "", "Path to configuration file (required)")
+	configCmd.MarkFlagRequired(pathParamName)
 }
 
 func runConfigCmd(path string, fs afero.Fs, w io.Writer) error {
