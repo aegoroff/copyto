@@ -30,8 +30,9 @@ var cfg string
 
 // configCmd represents the config command
 var configCmd = &cobra.Command{
-	Use:   "config",
-	Short: "Use TOML configuration file to set parameters",
+	Use:     "config",
+	Aliases: []string{"conf", "c"},
+	Short:   "Use TOML configuration file to configure required application parameters",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var osFs = afero.NewOsFs()
 		return runConfigCmd(osFs, os.Stdout)

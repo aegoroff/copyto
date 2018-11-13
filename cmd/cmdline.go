@@ -13,8 +13,9 @@ var tgt string
 
 // cmdlineCmd represents the cmdline command
 var cmdlineCmd = &cobra.Command{
-	Use:   "cmdline",
-	Short: "Use command line to set parameters",
+	Use:     "cmdline",
+	Aliases: []string{"cmd", "l"},
+	Short:   "Use command line to configure required application parameters",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var osFs = afero.NewOsFs()
 		return runCommandLineCmd(osFs, os.Stdout)
