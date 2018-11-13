@@ -18,13 +18,10 @@ func Test_commandlinecmd(t *testing.T) {
 	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
 	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
 
-	src = "s"
-	tgt = "t"
-
 	buf := bytes.NewBufferString("")
 
 	// Act
-	runCommandLineCmd(appFS, buf)
+	runCommandLineCmd("s", "t", appFS, buf)
 
 	// Assert
 	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
@@ -67,12 +64,10 @@ title = "test"
 	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
 	afero.WriteFile(appFS, "c/config.toml", []byte(config), 0644)
 
-	cfg = "c/config.toml"
-
 	buf := bytes.NewBufferString("")
 
 	// Act
-	runConfigCmd(appFS, buf)
+	runConfigCmd("c/config.toml", appFS, buf)
 
 	// Assert
 	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
@@ -106,12 +101,10 @@ title = "test"
 	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
 	afero.WriteFile(appFS, "c/config.toml", []byte(config), 0644)
 
-	cfg = "c/config.toml"
-
 	buf := bytes.NewBufferString("")
 
 	// Act
-	runConfigCmd(appFS, buf)
+	runConfigCmd("c/config.toml", appFS, buf)
 
 	// Assert
 	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
@@ -138,12 +131,10 @@ title = "test"
 	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
 	afero.WriteFile(appFS, "c/config.toml", []byte(config), 0644)
 
-	cfg = "c/config.toml"
-
 	buf := bytes.NewBufferString("")
 
 	// Act
-	runConfigCmd(appFS, buf)
+	runConfigCmd("c/config.toml", appFS, buf)
 
 	// Assert
 	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
@@ -161,12 +152,10 @@ func Test_configcmdUnexistConfig(t *testing.T) {
 	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
 	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
 
-	cfg = "c/config.toml"
-
 	buf := bytes.NewBufferString("")
 
 	// Act
-	runConfigCmd(appFS, buf)
+	runConfigCmd("c/config.toml", appFS, buf)
 
 	// Assert
 	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
