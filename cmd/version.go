@@ -11,9 +11,10 @@ var Version = "0.3.0"
 
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Print the version number of copyto",
-	Long:  `All software has versions. This is copyto's`,
+	Use:     "version",
+	Aliases: []string{"ver"},
+	Short:   "Print the version number of copyto",
+	Long:    `All software has versions. This is copyto's`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("copyto v%s\n", Version)
 	},
