@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// Whether to use verbose output
 var Verbose bool
 
 // rootCmd represents the root command
@@ -22,6 +23,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "Verbose output")
 }
 
+// Executes package
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
