@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"copyto/logic"
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/spf13/afero"
@@ -49,11 +50,10 @@ func runConfigCmd(fs afero.Fs, w io.Writer) error {
 	if _, err := decodeConfig(cfg, fs, &config); err != nil {
 		return err
 	}
-
 	for k, v := range config.Definitions {
 		source := findSource(v, config.Sources)
 		fmt.Fprintf(w, " Section: %s\n Source: %s\n Target: %s\n", k, source, v.Target)
-		coptyfiletree(source, v.Target, fs, w, Verbose)
+		logic.CoptyFileTree(source, v.Target, fs, w, Verbose)
 	}
 
 	return nil

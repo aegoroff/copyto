@@ -1,4 +1,4 @@
-package cmd
+package logic
 
 import (
 	"fmt"
@@ -17,7 +17,8 @@ type copyResult struct {
 	NotFoundInSource int64
 }
 
-func coptyfiletree(source, target string, fs afero.Fs, w io.Writer, verbose bool) error {
+// CoptyFileTree does files tree coping
+func CoptyFileTree(source, target string, fs afero.Fs, w io.Writer, verbose bool) error {
 
 	srcCh := make(chan *string, 1024)
 	tgtCh := make(chan *string, 1024)

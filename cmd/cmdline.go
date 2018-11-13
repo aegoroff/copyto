@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"copyto/logic"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"io"
@@ -21,7 +22,7 @@ var cmdlineCmd = &cobra.Command{
 }
 
 func runCommandLineCmd(fs afero.Fs, w io.Writer) error {
-	return coptyfiletree(src, tgt, fs, w, Verbose)
+	return logic.CoptyFileTree(src, tgt, fs, w, Verbose)
 }
 
 func init() {
