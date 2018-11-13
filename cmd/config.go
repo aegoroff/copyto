@@ -31,9 +31,9 @@ var cfg string
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Use TOML configuration file to set parameters",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		var osFs = afero.NewOsFs()
-		runConfigCmd(osFs, os.Stdout)
+		return runConfigCmd(osFs, os.Stdout)
 	},
 }
 

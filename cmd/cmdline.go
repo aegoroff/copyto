@@ -14,9 +14,9 @@ var tgt string
 var cmdlineCmd = &cobra.Command{
 	Use:   "cmdline",
 	Short: "Use command line to set parameters",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		var osFs = afero.NewOsFs()
-		runCommandLineCmd(osFs, os.Stdout)
+		return runCommandLineCmd(osFs, os.Stdout)
 	},
 }
 

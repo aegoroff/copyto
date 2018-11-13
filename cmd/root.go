@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -16,6 +15,7 @@ var rootCmd = &cobra.Command{
 	Long: `copyto is a small commandline app written in Go that allows
 you to easily one way sync files between source folder and target folder`,
 	Run: func(cmd *cobra.Command, args []string) {
+		cmd.Help()
 	},
 }
 
@@ -27,7 +27,6 @@ func init() {
 // Execute starts package running
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
 		os.Exit(1)
 	}
 }
