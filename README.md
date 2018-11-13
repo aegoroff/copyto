@@ -14,18 +14,40 @@ in TOML format also can be used. Using configuration file you can setup several 
 Command line syntax:
 --------------------
 ```
-Usage: copyto [global options] <verb> [verb options]
+Usage:
+  copyto [flags]
+  copyto [command]
 
-Global options:
-            --version Print version
-        -v, --verbose Verbose output
+Available Commands:
+  cmdline     Use command line to set parameters
+  config      Use TOML configuration file to set parameters
+  help        Help about any command
+  version     Print the version number of copyto
 
-Verbs:
-    cmdline:
-        -s, --source  Path to the source folder, to copy (sync) data from (*)
-        -t, --target  Path to the target folder, to copy (sync) data to (*)
-    config:
-        -p, --path    Path to configuration file (*)
+Flags:
+  -h, --help      help for copyto
+  -v, --verbose   Verbose output
+
+Use "copyto [command] --help" for more information about a command.
+
+Use command line to set parameters
+
+Usage:
+  copyto cmdline [flags]
+
+Flags:
+  -h, --help            help for cmdline
+  -s, --source string   Path to the source folder, to copy (sync) data from
+  -t, --target string   Path to the target folder, to copy (sync) data to
+
+Use TOML configuration file to set parameters
+
+Usage:
+  copyto config [flags]
+
+Flags:
+  -h, --help          help for config
+  -p, --path string   Path to configuration file
 ```
 
 Examples:
