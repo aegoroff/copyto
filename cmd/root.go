@@ -20,6 +20,7 @@ you to easily one way sync files between source folder and target folder`,
 }
 
 func init() {
+	cobra.MousetrapHelpText = ""
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "Verbose output")
 }
 
