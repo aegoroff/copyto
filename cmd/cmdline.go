@@ -13,12 +13,12 @@ var cmdlineCmd = &cobra.Command{
 	Use:     "cmdline",
 	Aliases: []string{"cmd", "l"},
 	Short:   "Use command line to configure required application parameters",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 
 		src := cmd.Flag(srcParamName)
 		tgt := cmd.Flag(tgtParamName)
 
-		return logic.CopyFileTree(src.Value.String(), tgt.Value.String(), appFileSystem, appWriter, Verbose)
+		logic.CopyFileTree(src.Value.String(), tgt.Value.String(), appFileSystem, appWriter, Verbose)
 	},
 }
 

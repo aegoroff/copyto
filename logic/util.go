@@ -69,8 +69,10 @@ func ReadDir(dirname string, fs afero.Fs) ([]os.FileInfo, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	defer f.Close()
+
 	list, err := f.Readdir(-1)
-	f.Close()
 	if err != nil {
 		return nil, err
 	}

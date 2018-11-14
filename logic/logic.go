@@ -18,7 +18,7 @@ type copyResult struct {
 }
 
 // CopyFileTree does files tree coping
-func CopyFileTree(source, target string, fs afero.Fs, w io.Writer, verbose bool) error {
+func CopyFileTree(source, target string, fs afero.Fs, w io.Writer, verbose bool) {
 
 	srcCh := make(chan *string, 1024)
 	tgtCh := make(chan *string, 1024)
@@ -28,8 +28,6 @@ func CopyFileTree(source, target string, fs afero.Fs, w io.Writer, verbose bool)
 
 	res, missing := copyTree(srcCh, tgtCh, source, target, verbose, fs, w)
 	printTotals(res, missing, w)
-
-	return nil
 }
 
 func printTotals(res copyResult, missing []string, w io.Writer) {
