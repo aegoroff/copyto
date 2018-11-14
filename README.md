@@ -19,8 +19,8 @@ Usage:
   copyto [command]
 
 Available Commands:
-  cmdline     Use command line to set parameters
-  config      Use TOML configuration file to set parameters
+  cmdline     Use command line to configure required application parameters
+  config      Use TOML configuration file to configure required application parameters
   help        Help about any command
   version     Print the version number of copyto
 
@@ -29,25 +29,43 @@ Flags:
   -v, --verbose   Verbose output
 
 Use "copyto [command] --help" for more information about a command.
+```
 
-Use command line to set parameters
+Command line mode syntax:
+```
+Use command line to configure required application parameters
 
 Usage:
   copyto cmdline [flags]
 
+Aliases:
+  cmdline, cmd, l
+
 Flags:
   -h, --help            help for cmdline
-  -s, --source string   Path to the source folder, to copy (sync) data from
-  -t, --target string   Path to the target folder, to copy (sync) data to
+  -s, --source string   Path to the source folder, to copy (sync) data from (required)
+  -t, --target string   Path to the target folder, to copy (sync) data to (required)
 
-Use TOML configuration file to set parameters
+Global Flags:
+  -v, --verbose   Verbose output
+```
+
+Config file mode syntax:
+```
+Use TOML configuration file to configure required application parameters
 
 Usage:
   copyto config [flags]
 
+Aliases:
+  config, conf, c
+
 Flags:
   -h, --help          help for config
-  -p, --path string   Path to configuration file
+  -p, --path string   Path to configuration file (required)
+
+Global Flags:
+  -v, --verbose   Verbose output
 ```
 
 Examples:
