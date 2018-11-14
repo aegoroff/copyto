@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"io"
-	"os"
 )
 
 type tomlConfig struct {
@@ -35,8 +34,7 @@ var configCmd = &cobra.Command{
 	Short:   "Use TOML configuration file to configure required application parameters",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		path := cmd.Flag(pathParamName)
-		var osFs = afero.NewOsFs()
-		return runConfigCmd(path.Value.String(), osFs, os.Stdout)
+		return runConfigCmd(path.Value.String(), appFileSystem, appWriter)
 	},
 }
 

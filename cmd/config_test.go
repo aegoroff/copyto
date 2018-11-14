@@ -7,38 +7,22 @@ import (
 	"testing"
 )
 
-func Test_commandlinecmd(t *testing.T) {
-	// Arrange
-	ass := assert.New(t)
-	appFS := afero.NewMemMapFs()
+func Test_ConfNormalCase(t *testing.T) {
+	var tests = []struct {
+		cmd     string
+		pathKey string
+	}{
+		{"conf", "-p"},
+		{"conf", "--path"},
+		{"config", "--path"},
+		{"c", "--path"},
+	}
+	for _, test := range tests {
+		// Arrange
+		ass := assert.New(t)
+		appFS := afero.NewMemMapFs()
 
-	appFS.MkdirAll("s/p1", 0755)
-	appFS.MkdirAll("t/p1", 0755)
-
-	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
-
-	buf := bytes.NewBufferString("")
-
-	// Act
-	runCommandLineCmd("s", "t", appFS, buf)
-
-	// Assert
-	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
-	ass.Equal("/s/p1/f1.txt", string(b))
-	ass.Equal(`
-   Total copied:                              1
-   Present in target but not found in source: 0
-
-`, buf.String())
-}
-
-func Test_configcmd(t *testing.T) {
-	// Arrange
-	ass := assert.New(t)
-	appFS := afero.NewMemMapFs()
-
-	const config = `# test config
+		const config = `# test config
 
 title = "test"
 
@@ -56,25 +40,34 @@ title = "test"
   source = 's1'
   target = 't1'`
 
-	appFS.MkdirAll("s/p1", 0755)
-	appFS.MkdirAll("t/p1", 0755)
-	appFS.MkdirAll("c", 0755)
+		appFS.MkdirAll("s/p1", 0755)
+		appFS.MkdirAll("t/p1", 0755)
+		appFS.MkdirAll("c", 0755)
+		const sourceContent = "src"
+		const sourceFilePath = "s/p1/f1.txt"
+		const targetContent = "tgt"
+		const targetFilePath = "t/p1/f1.txt"
+		const configPath = "c/config.toml"
 
-	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, "c/config.toml", []byte(config), 0644)
+		afero.WriteFile(appFS, sourceFilePath, []byte(sourceContent), 0644)
+		afero.WriteFile(appFS, targetFilePath, []byte(targetContent), 0644)
+		afero.WriteFile(appFS, configPath, []byte(config), 0644)
 
-	buf := bytes.NewBufferString("")
+		buf := bytes.NewBufferString("")
+		appWriter = buf
+		appFileSystem = appFS
 
-	// Act
-	runConfigCmd("c/config.toml", appFS, buf)
+		// Act
+		rootCmd.SetArgs([]string{test.cmd, test.pathKey, configPath})
+		rootCmd.Execute()
 
-	// Assert
-	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
-	ass.Equal("/s/p1/f1.txt", string(b))
+		// Assert
+		newTargetContent, _ := afero.ReadFile(appFS, targetFilePath)
+		ass.Equal(sourceContent, string(newTargetContent))
+	}
 }
 
-func Test_configcmdSourceKeyMismatch_NothingCopied(t *testing.T) {
+func Test_SourceKeyMismatch_NothingCopied(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
 	appFS := afero.NewMemMapFs()
@@ -102,16 +95,19 @@ title = "test"
 	afero.WriteFile(appFS, "c/config.toml", []byte(config), 0644)
 
 	buf := bytes.NewBufferString("")
+	appWriter = buf
+	appFileSystem = appFS
 
 	// Act
-	runConfigCmd("c/config.toml", appFS, buf)
+	rootCmd.SetArgs([]string{"conf", "-p", "c/config.toml"})
+	rootCmd.Execute()
 
 	// Assert
 	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
 	ass.Equal("/t/p1/f1.txt", string(b))
 }
 
-func Test_configcmdInvalidConfig(t *testing.T) {
+func Test_InvalidConfig_NothingCopied(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
 	appFS := afero.NewMemMapFs()
@@ -132,16 +128,19 @@ title = "test"
 	afero.WriteFile(appFS, "c/config.toml", []byte(config), 0644)
 
 	buf := bytes.NewBufferString("")
+	appWriter = buf
+	appFileSystem = appFS
 
 	// Act
-	runConfigCmd("c/config.toml", appFS, buf)
+	rootCmd.SetArgs([]string{"conf", "-p", "c/config.toml"})
+	rootCmd.Execute()
 
 	// Assert
 	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
 	ass.Equal("/t/p1/f1.txt", string(b))
 }
 
-func Test_configcmdUnexistConfig(t *testing.T) {
+func Test_UnexistConfig_NothingCopied(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
 	appFS := afero.NewMemMapFs()
@@ -153,9 +152,12 @@ func Test_configcmdUnexistConfig(t *testing.T) {
 	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
 
 	buf := bytes.NewBufferString("")
+	appWriter = buf
+	appFileSystem = appFS
 
 	// Act
-	runConfigCmd("c/config.toml", appFS, buf)
+	rootCmd.SetArgs([]string{"conf", "-p", "c/config.toml"})
+	rootCmd.Execute()
 
 	// Assert
 	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
