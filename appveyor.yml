@@ -27,7 +27,7 @@ install:
   - go get -u "github.com/akutz/sortfold"
   - go get -u "github.com/spf13/afero"
   - go get -u "github.com/spf13/cobra"
-  - go get -u "github.com/BurntSushi/toml"
+  - go get -u "github.com/pelletier/go-toml"
 
 stack: go 1.11
 
