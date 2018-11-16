@@ -117,7 +117,7 @@ title = "Exaample sync"
 [definitions]
 
   [definitions.def1]
-  sourceLink = "src1"
+  sourcelink = "src1"
   target = 'D:\fTarget'
 
   [definitions.def2]
@@ -125,6 +125,8 @@ title = "Exaample sync"
   target = 'D:\fTarget2'
 ```
 **IMPORTANT:** So as not to write double back slashes on Windows use string in '(apos) instead of "(quote).
+
+**IMPORTANT:** All keys must be in lower case
 
 You can use one source for several definitions using it's key (string after dot in square brackets) as value of *sourceLink* option. If both *source* and *sourceLink* defined in the
 same definition *source* option wins.

@@ -3,7 +3,7 @@ package cmd
 import (
 	"copyto/logic"
 	"fmt"
-	"github.com/BurntSushi/toml"
+	"github.com/pelletier/go-toml"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"io"
@@ -47,7 +47,7 @@ func init() {
 
 func runConfigCmd(path string, fs afero.Fs, w io.Writer) error {
 	var config tomlConfig
-	if _, err := decodeConfig(path, fs, &config); err != nil {
+	if err := decodeConfig(path, fs, &config); err != nil {
 		return err
 	}
 	for k, v := range config.Definitions {
@@ -59,12 +59,12 @@ func runConfigCmd(path string, fs afero.Fs, w io.Writer) error {
 	return nil
 }
 
-func decodeConfig(fpath string, fs afero.Fs, v interface{}) (toml.MetaData, error) {
+func decodeConfig(fpath string, fs afero.Fs, v interface{}) error {
 	bs, err := afero.ReadFile(fs, fpath)
 	if err != nil {
-		return toml.MetaData{}, err
+		return err
 	}
-	return toml.Decode(string(bs), v)
+	return toml.Unmarshal(bs, v)
 }
 
 func findSource(def definition, sources map[string]source) string {

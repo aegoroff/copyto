@@ -33,7 +33,7 @@ title = "test"
 [definitions]
 
   [definitions.def1]
-  sourceLink = "source1"
+  sourcelink = "source1"
   target = 't'
 
   [definitions.def2]
@@ -83,7 +83,7 @@ title = "test"
 [definitions]
 
   [definitions.def1]
-  sourceLink = "source2"
+  sourcelink = "source2"
   target = 't'`
 
 	appFS.MkdirAll("s/p1", 0755)
