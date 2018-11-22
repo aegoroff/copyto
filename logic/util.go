@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/afero"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"sort"
@@ -51,13 +52,13 @@ func copyFile(src, dst string, fs afero.Fs) error {
 	if err != nil {
 		return err
 	}
-	defer source.Close()
+	defer closeResource(source)
 
 	destination, err := fs.Create(dst)
 	if err != nil {
 		return err
 	}
-	defer destination.Close()
+	defer closeResource(destination)
 	_, err = io.Copy(destination, source)
 	return err
 }
@@ -70,7 +71,7 @@ func ReadDir(dirname string, fs afero.Fs) ([]os.FileInfo, error) {
 		return nil, err
 	}
 
-	defer f.Close()
+	defer closeResource(f)
 
 	list, err := f.Readdir(-1)
 	if err != nil {
@@ -78,4 +79,11 @@ func ReadDir(dirname string, fs afero.Fs) ([]os.FileInfo, error) {
 	}
 	sort.Slice(list, func(i, j int) bool { return list[i].Name() < list[j].Name() })
 	return list, nil
+}
+
+func closeResource(c io.Closer) {
+	err := c.Close()
+	if err != nil {
+		log.Println(err)
+	}
 }
