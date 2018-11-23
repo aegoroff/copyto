@@ -19,8 +19,8 @@ var rootCmd = &cobra.Command{
 	Short: "copyto is a small one way sync tool",
 	Long: `copyto is a small commandline app written in Go that allows
 you to easily one way sync files between source folder and target folder`,
-	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return cmd.Help()
 	},
 }
 
