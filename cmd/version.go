@@ -15,8 +15,9 @@ var versionCmd = &cobra.Command{
 	Aliases: []string{"ver"},
 	Short:   "Print the version number of copyto",
 	Long:    `All software has versions. This is copyto's`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Fprintf(appWriter, "copyto v%s\n", Version)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		_, err := fmt.Fprintf(appWriter, "copyto v%s\n", Version)
+		return err
 	},
 }
 
