@@ -104,7 +104,7 @@ It will copy 3 files from *D:\fSource* to *D:\fTarget* and says that *f5.xlsx* n
    Present in target but not found in source: 1
 ```
 
-Now let's do the same task using config file. Create text file in UTF-8 encoding **without BOM** with the content like this:
+Now let's do the same task using config file. Create text file in UTF-8 encoding with the content like this:
 ```
 # Example copyto config
 
