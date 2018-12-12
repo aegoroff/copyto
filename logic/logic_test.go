@@ -290,3 +290,41 @@ func Test_copyTreeUnexistTarget_NoFilesCopied(t *testing.T) {
 	bytes1, _ := afero.ReadFile(appFS, "t/p1/F1.txt")
 	ass.Equal("/t/p1/F1.txt", string(bytes1))
 }
+
+func Test_copyFileUnexistSource_ErrReturned(t *testing.T) {
+	// Arrange
+	ass := assert.New(t)
+
+	appFS := afero.NewMemMapFs()
+
+	appFS.MkdirAll("t/p1", 0755)
+
+	afero.WriteFile(appFS, "t/p1/F1.txt", []byte("/t/p1/F1.txt"), 0644)
+
+	// Act
+	err := copyFile("s/p1/F1.txt", "t/p1/F1.txt", appFS)
+
+	// Assert
+	ass.NotNil(err)
+	bytes1, _ := afero.ReadFile(appFS, "t/p1/F1.txt")
+	ass.Equal("/t/p1/F1.txt", string(bytes1))
+}
+
+func Test_copyFileSourceIsDir_ErrReturned(t *testing.T) {
+	// Arrange
+	ass := assert.New(t)
+
+	appFS := afero.NewMemMapFs()
+
+	appFS.MkdirAll("t/p1", 0755)
+
+	afero.WriteFile(appFS, "t/p1/F1.txt", []byte("/t/p1/F1.txt"), 0644)
+
+	// Act
+	err := copyFile("t/p1", "t/p1/F1.txt", appFS)
+
+	// Assert
+	ass.NotNil(err)
+	bytes1, _ := afero.ReadFile(appFS, "t/p1/F1.txt")
+	ass.Equal("/t/p1/F1.txt", string(bytes1))
+}
