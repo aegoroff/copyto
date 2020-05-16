@@ -56,6 +56,8 @@ func runConfigCmd(path string, fs afero.Fs, w io.Writer) error {
 		source := findSource(v, config.Sources)
 		fmt.Fprintf(w, " Section: %s\n Source: %s\n Target: %s\n", k, source, v.Target)
 		flt := logic.FileFilter {
+			Include: v.Include,
+			Exclude: v.Exclude,
 		}
 		logic.CopyFileTree(source, v.Target, flt, fs, w, Verbose)
 	}
