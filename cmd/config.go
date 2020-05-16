@@ -23,6 +23,8 @@ type definition struct {
 	SourceLink string
 	Source     string
 	Target     string
+	Include    string
+	Exclude    string
 }
 
 const pathParamName = "path"
@@ -53,7 +55,9 @@ func runConfigCmd(path string, fs afero.Fs, w io.Writer) error {
 	for k, v := range config.Definitions {
 		source := findSource(v, config.Sources)
 		fmt.Fprintf(w, " Section: %s\n Source: %s\n Target: %s\n", k, source, v.Target)
-		logic.CopyFileTree(source, v.Target, fs, w, Verbose)
+		flt := logic.FileFilter {
+		}
+		logic.CopyFileTree(source, v.Target, flt, fs, w, Verbose)
 	}
 
 	return nil

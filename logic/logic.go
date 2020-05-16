@@ -17,8 +17,16 @@ type copyResult struct {
 	NotFoundInSource int64
 }
 
+// Files filter
+type FileFilter struct {
+	// Only files whose names match the pattern specified
+	Include string
+	// Exclude files whose names match pattern specified
+	Exclude string
+}
+
 // CopyFileTree does files tree coping
-func CopyFileTree(source, target string, fs afero.Fs, w io.Writer, verbose bool) {
+func CopyFileTree(source, target string, filter FileFilter, fs afero.Fs, w io.Writer, verbose bool) {
 
 	srcCh := make(chan *string, 1024)
 	tgtCh := make(chan *string, 1024)
@@ -26,7 +34,7 @@ func CopyFileTree(source, target string, fs afero.Fs, w io.Writer, verbose bool)
 	go readDirectory(source, fs, srcCh)
 	go readDirectory(target, fs, tgtCh)
 
-	res, missing := copyTree(srcCh, tgtCh, source, target, verbose, fs, w)
+	res, missing := copyTree(srcCh, tgtCh, source, target, verbose, fs, w, filter)
 	printTotals(res, missing, w)
 }
 
@@ -50,7 +58,7 @@ func printTotals(res copyResult, missing []string, w io.Writer) {
 	report.Execute(w, res)
 }
 
-func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase string, targetBase string, verbose bool, fs afero.Fs, w io.Writer) (copyResult, []string) {
+func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase string, targetBase string, verbose bool, fs afero.Fs, w io.Writer, filter FileFilter) (copyResult, []string) {
 
 	sourcesTree, targetsTree := createTrees(sourceCh, targetCh)
 

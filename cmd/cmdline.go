@@ -7,6 +7,8 @@ import (
 
 const srcParamName = "source"
 const tgtParamName = "target"
+const inclParamName = "include"
+const exclParamName = "exclude"
 
 // cmdlineCmd represents the cmdline command
 var cmdlineCmd = &cobra.Command{
@@ -17,8 +19,14 @@ var cmdlineCmd = &cobra.Command{
 
 		src := cmd.Flag(srcParamName)
 		tgt := cmd.Flag(tgtParamName)
+		incl := cmd.Flag(inclParamName)
+		excl := cmd.Flag(exclParamName)
 
-		logic.CopyFileTree(src.Value.String(), tgt.Value.String(), appFileSystem, appWriter, Verbose)
+		flt := logic.FileFilter {
+			Include: incl.Value.String(),
+			Exclude: excl.Value.String(),
+		}
+		logic.CopyFileTree(src.Value.String(), tgt.Value.String(), flt, appFileSystem, appWriter, Verbose)
 	},
 }
 
@@ -27,6 +35,8 @@ func init() {
 
 	cmdlineCmd.Flags().StringP(srcParamName, "s", "", "Path to the source folder, to copy (sync) data from (required)")
 	cmdlineCmd.Flags().StringP(tgtParamName, "t", "", "Path to the target folder, to copy (sync) data to (required)")
+	cmdlineCmd.Flags().StringP(inclParamName, "i", "", "Include only files whose names match the pattern specified by the option")
+	cmdlineCmd.Flags().StringP(exclParamName, "e", "", "Exclude files whose names match pattern specified by the option")
 	cmdlineCmd.MarkFlagRequired(srcParamName)
 	cmdlineCmd.MarkFlagRequired(tgtParamName)
 }
