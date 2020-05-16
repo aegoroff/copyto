@@ -31,8 +31,8 @@ func CopyFileTree(source, target string, filter FileFilter, fs afero.Fs, w io.Wr
 	srcCh := make(chan *string, 1024)
 	tgtCh := make(chan *string, 1024)
 
-	go readDirectory(source, fs, srcCh)
-	go readDirectory(target, fs, tgtCh)
+	go readDirectory(source, filter, fs, srcCh)
+	go readDirectory(target, filter, fs, tgtCh)
 
 	res, missing := copyTree(srcCh, tgtCh, source, target, verbose, fs, w, filter)
 	printTotals(res, missing, w)
@@ -137,13 +137,37 @@ func createTrees(sourceCh <-chan *string, targetCh <-chan *string) (*rbtree.RbTr
 	return sourcesTree, targetsTree
 }
 
-func readDirectory(dir string, fs afero.Fs, ch chan<- *string) {
+func readDirectory(dir string, filter FileFilter, fs afero.Fs, ch chan<- *string) {
 	walkDirBreadthFirst(dir, fs, func(parent string, entry os.FileInfo) {
 		if entry.IsDir() {
 			return
 		}
+
+		if filterFile(entry.Name(), filter.Include, filter.Exclude) {
+			return
+		}
+
 		path := filepath.Join(parent, entry.Name())
 		ch <- &path
 	})
 	close(ch)
+}
+
+func filterFile(file string, include string, exclude string) bool {
+	isInclude := matchPathPattern(include, file, true)
+	isExclude := matchPathPattern(exclude, file, false)
+
+	return !isInclude || isExclude
+}
+
+// Returns resultIfError in case of empty pattern or pattern parsing error
+func matchPathPattern(pattern string, file string, resultIfError bool) bool {
+	result, err := filepath.Match(pattern, file)
+	if err != nil {
+		log.Printf("%v", err)
+		result = resultIfError
+	} else if len(pattern) == 0 {
+		result = resultIfError
+	}
+	return result
 }

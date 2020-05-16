@@ -53,3 +53,53 @@ func Test_CmdNormalCase(t *testing.T) {
 `, buf.String())
 	}
 }
+
+func Test_CmdFilteringTests(t *testing.T) {
+	const sourceContent = "src"
+	const sourceFilePath = "s/p1/f1.txt"
+	const targetContent = "tgt"
+	const targetFilePath = "t/p1/f1.txt"
+
+	var tests = []struct {
+		include string
+		exclude        string
+		newFileContent string
+	}{
+		// Include
+		{"f1.*", "", sourceContent},
+		{"f1.txt","", sourceContent},
+		{"f1.t*","", sourceContent},
+		{"f1","", targetContent},
+		{"f1.t","", targetContent},
+		// Exclude
+		{"","f1.*", targetContent},
+		{"","f1.txt", targetContent},
+		{"","f1.t*", targetContent},
+		{"","f1", sourceContent},
+		{"","f1.t", sourceContent},
+	}
+
+	for _, test := range tests {
+		// Arrange
+		ass := assert.New(t)
+		appFS := afero.NewMemMapFs()
+
+		appFS.MkdirAll("s/p1", 0755)
+		appFS.MkdirAll("t/p1", 0755)
+
+		afero.WriteFile(appFS, sourceFilePath, []byte(sourceContent), 0644)
+		afero.WriteFile(appFS, targetFilePath, []byte(targetContent), 0644)
+
+		buf := bytes.NewBufferString("")
+		appWriter = buf
+		appFileSystem = appFS
+
+		// Act
+		rootCmd.SetArgs([]string{"cmd", "-s", "s", "-t", "t", "-i", test.include, "-e", test.exclude})
+		rootCmd.Execute()
+
+		// Assert
+		newTargetContent, _ := afero.ReadFile(appFS, targetFilePath)
+		ass.Equal(test.newFileContent, string(newTargetContent))
+	}
+}
