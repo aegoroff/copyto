@@ -9,7 +9,11 @@ matches (by relative path) corresponding files in target folder will be copied f
 target one.
 
 The app supports setting source and target paths directly from command line and configuration file
-in TOML format also can be used. Using configuration file you can setup several sources and targets
+in TOML format also can be used. Using configuration file you can setup several sources and targets.
+
+Also you can setup file names filter using include or exclude options (or both) using either configuration
+file or command line. Include filter allows only file matched to be copied. Exclude filter allows all files but 
+those that matched to be copied.
 
 Command line syntax:
 --------------------
@@ -42,9 +46,11 @@ Aliases:
   cmdline, cmd, l
 
 Flags:
-  -h, --help            help for cmdline
-  -s, --source string   Path to the source folder, to copy (sync) data from (required)
-  -t, --target string   Path to the target folder, to copy (sync) data to (required)
+  -e, --exclude string   Exclude files whose names match pattern specified by the option
+  -h, --help             help for cmdline
+  -i, --include string   Include only files whose names match the pattern specified by the option
+  -s, --source string    Path to the source folder, to copy (sync) data from (required)
+  -t, --target string    Path to the target folder, to copy (sync) data to (required)
 
 Global Flags:
   -v, --verbose   Verbose output
@@ -94,7 +100,8 @@ So we use command line to run syncing:
 copyto cmdline -s D:\fSource -t D:\fTarget
 ```
 
-It will copy 3 files from *D:\fSource* to *D:\fTarget* and says that *f5.xlsx* not found in the source folder. File *f4.rar* will not be copied because it is not exists in the target folder:
+It will copy 3 files from *D:\fSource* to *D:\fTarget* and says that *f5.xlsx* not found in the source folder. 
+File *f4.rar* will not be copied because it is not exists in the target folder:
 
 ```
    Found files that present in target but missing in source:
@@ -128,7 +135,8 @@ title = "Exaample sync"
 
 **IMPORTANT:** All keys must be in lower case
 
-You can use one source for several definitions using it's key (string after dot in square brackets) as value of *sourceLink* option. If both *source* and *sourceLink* defined in the
+You can use one source for several definitions using it's key (string after dot in square brackets) as value 
+of *sourceLink* option. If both *source* and *sourceLink* defined in the
 same definition *source* option wins.
 
 And then use it using config verb:
@@ -152,4 +160,33 @@ The app will do sync and shows output like this:
 
    Total copied:                              0
    Present in target but not found in source: 0
+```
+
+Filtering config example:
+```
+# Example copyto config
+
+title = "Exaample sync"
+
+[sources]
+ [sources.src1]
+  source = 'D:\fSource'
+
+[definitions]
+
+  [definitions.def1]
+  sourcelink = "src1"
+  target = 'D:\fTarget'
+  exclude = '*.exe'
+
+  [definitions.def2]
+  source = 'D:\fSource1'
+  target = 'D:\fTarget2'
+  include = '*.txt'
+
+  [definitions.def3]
+  source = 'D:\fSource3'
+  target = 'D:\fTarget4'
+  include = '*.txt'
+  exclude = 'bad*.txt'
 ```
