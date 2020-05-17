@@ -61,22 +61,22 @@ func Test_CmdFilteringTests(t *testing.T) {
 	const targetFilePath = "t/p1/f1.txt"
 
 	var tests = []struct {
-		include string
+		include        string
 		exclude        string
 		newFileContent string
 	}{
 		// Include
 		{"f1.*", "", sourceContent},
-		{"f1.txt","", sourceContent},
-		{"f1.t*","", sourceContent},
-		{"f1","", targetContent},
-		{"f1.t","", targetContent},
+		{"f1.txt", "", sourceContent},
+		{"f1.t*", "", sourceContent},
+		{"f1", "", targetContent},
+		{"f1.t", "", targetContent},
 		// Exclude
-		{"","f1.*", targetContent},
-		{"","f1.txt", targetContent},
-		{"","f1.t*", targetContent},
-		{"","f1", sourceContent},
-		{"","f1.t", sourceContent},
+		{"", "f1.*", targetContent},
+		{"", "f1.txt", targetContent},
+		{"", "f1.t*", targetContent},
+		{"", "f1", sourceContent},
+		{"", "f1.t", sourceContent},
 	}
 
 	for _, test := range tests {
