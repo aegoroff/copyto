@@ -28,13 +28,14 @@ install:
   - go get -u "github.com/spf13/afero"
   - go get -u "github.com/spf13/cobra"
   - go get -u "github.com/pelletier/go-toml"
+  - go get "github.com/mitchellh/gox"
 
 stack: go 1.14
 
 image: Visual Studio 2017
 
 build_script:
-  - go build -ldflags "-X copyto/cmd.Version=%APPVEYOR_BUILD_VERSION%" copyto
+  - gox -osarch="linux/amd64 linux/arm linux/386 darwin/amd64 windows/amd64 windows/386" -ldflags "-X copyto/cmd.Version=%APPVEYOR_BUILD_VERSION%" copyto
 
 test_script:
   - go test -coverprofile=coverage.txt -covermode=atomic copyto/...
@@ -45,6 +46,16 @@ after_test:
       bash codecov.sh -f "coverage.txt" -t $env:CODECOV_TOKEN
 
 artifacts:
-  - path: copyto.exe
+  - path: copyto_windows_amd64.exe
+    name: binary
+  - path: copyto_windows_386.exe
+    name: binary
+  - path: copyto_linux_amd64
+    name: binary
+  - path: copyto_linux_386
+    name: binary
+  - path: copyto_linux_arm
+    name: binary
+  - path: copyto_darwin_amd64
     name: binary
 
