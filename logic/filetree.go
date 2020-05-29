@@ -11,18 +11,17 @@ type fileTreeNode struct {
 	paths []string
 }
 
-func (x fileTreeNode) LessThan(y interface{}) bool {
-	return sortfold.CompareFold(x.name, (y.(fileTreeNode)).name) < 0
+func (x *fileTreeNode) LessThan(y interface{}) bool {
+	return sortfold.CompareFold(x.name, (y.(*fileTreeNode)).name) < 0
 }
 
-func (x fileTreeNode) EqualTo(y interface{}) bool {
-	return strings.EqualFold(x.name, (y.(fileTreeNode)).name)
+func (x *fileTreeNode) EqualTo(y interface{}) bool {
+	return strings.EqualFold(x.name, (y.(*fileTreeNode)).name)
 }
 
-func newFileNodeKey(name string) *rbtree.Comparable {
-	var r rbtree.Comparable
-	r = fileTreeNode{name: name}
-	return &r
+func newFileNodeKey(name string) rbtree.Comparable {
+	n := fileTreeNode{name: name}
+	return &n
 }
 
 func newFileNode(name string) *rbtree.Node {
@@ -44,11 +43,9 @@ func addFileToTree(tree *rbtree.RbTree, file string, path string) {
 }
 
 func addPathToFileNode(n *rbtree.Node, path string) {
-	key := (*n.Key).(fileTreeNode)
+	key := n.Key.(*fileTreeNode)
 	key.paths = append(key.paths, path)
-	var r rbtree.Comparable
-	r = key
-	n.Key = &r
+	n.Key = key
 }
 
 func getFilePathsFromTree(tree *rbtree.RbTree, file string) ([]string, bool) {
@@ -56,6 +53,6 @@ func getFilePathsFromTree(tree *rbtree.RbTree, file string) ([]string, bool) {
 	if !ok {
 		return nil, false
 	}
-	key := (*found.Key).(fileTreeNode)
+	key := found.Key.(*fileTreeNode)
 	return key.paths, true
 }

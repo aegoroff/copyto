@@ -69,8 +69,8 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 		return result, missing
 	}
 
-	targetsTree.Ascend(func(c *rbtree.Comparable) bool {
-		node := (*c).(fileTreeNode)
+	targetsTree.Ascend(func(c rbtree.Comparable) bool {
+		node := c.(*fileTreeNode)
 		for _, tgt := range node.paths {
 			sources, ok := getFilePathsFromTree(sourcesTree, node.name)
 			normalizedTgt := strings.Replace(tgt, targetBase, "", 1)
