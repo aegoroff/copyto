@@ -34,18 +34,18 @@ func CopyFileTree(source, target string, filter FileFilter, fs afero.Fs, w io.Wr
 	go readDirectory(source, filter, fs, srcCh)
 	go readDirectory(target, filter, fs, tgtCh)
 
-	res, missing := copyTree(srcCh, tgtCh, source, target, verbose, fs, w, filter)
+	res, missing := copyTree(srcCh, tgtCh, source, target, verbose, fs, w)
 	printTotals(res, missing, w)
 }
 
 func printTotals(res copyResult, missing []string, w io.Writer) {
 
 	if len(missing) > 0 {
-		fmt.Fprintf(w, "   Found files that present in target but missing in source:\n")
+		_, _ = fmt.Fprintf(w, "   Found files that present in target but missing in source:\n")
 	}
 
 	for _, f := range missing {
-		fmt.Fprintf(w, "     %s\n", f)
+		_, _ = fmt.Fprintf(w, "     %s\n", f)
 	}
 
 	const totalTemplate = `
@@ -55,10 +55,10 @@ func printTotals(res copyResult, missing []string, w io.Writer) {
 `
 
 	var report = template.Must(template.New("copyResult").Parse(totalTemplate))
-	report.Execute(w, res)
+	_ = report.Execute(w, res)
 }
 
-func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase string, targetBase string, verbose bool, fs afero.Fs, w io.Writer, filter FileFilter) (copyResult, []string) {
+func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase string, targetBase string, verbose bool, fs afero.Fs, w io.Writer) (copyResult, []string) {
 
 	sourcesTree, targetsTree := createTrees(sourceCh, targetCh)
 
@@ -69,8 +69,8 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 		return result, missing
 	}
 
-	targetsTree.Ascend(func(c rbtree.Comparable) bool {
-		node := c.(*fileTreeNode)
+	targetsTree.Ascend(func(n rbtree.Node) bool {
+		node := n.Key().(*fileTreeNode)
 		for _, tgt := range node.paths {
 			sources, ok := getFilePathsFromTree(sourcesTree, node.name)
 			normalizedTgt := strings.Replace(tgt, targetBase, "", 1)
@@ -88,7 +88,7 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 					if err := copyFile(src, tgt, fs); err != nil {
 						log.Printf("%v", err)
 					} else if verbose {
-						fmt.Fprintf(w, "[%s] copied to [%s]\n", src, tgt)
+						_, _ = fmt.Fprintf(w, "[%s] copied to [%s]\n", src, tgt)
 					}
 					result.TotalCopied++
 					found = true
@@ -107,7 +107,7 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 	return result, missing
 }
 
-func createTrees(sourceCh <-chan *string, targetCh <-chan *string) (*rbtree.RbTree, *rbtree.RbTree) {
+func createTrees(sourceCh <-chan *string, targetCh <-chan *string) (rbtree.RbTree, rbtree.RbTree) {
 	sourcesTree := rbtree.NewRbTree()
 	targetsTree := rbtree.NewRbTree()
 	srcDone := false

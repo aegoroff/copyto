@@ -18,7 +18,7 @@ func Test_addFileToTree(t *testing.T) {
 	ass.Equal(int64(1), tree.Len())
 	found, ok := tree.Search(newFileNodeKey("f"))
 	ass.True(ok)
-	key := found.Key.(*fileTreeNode)
+	key := found.Key().(*fileTreeNode)
 	ass.Equal("f", key.name)
 	ass.Equal([]string{"/f"}, key.paths)
 }
@@ -36,7 +36,7 @@ func Test_addFileToTreeSameFileDifferentPath(t *testing.T) {
 	ass.Equal(int64(1), tree.Len())
 	found, ok := tree.Search(newFileNodeKey("f"))
 	ass.True(ok)
-	key := found.Key.(*fileTreeNode)
+	key := found.Key().(*fileTreeNode)
 	ass.Equal("f", key.name)
 	ass.Equal([]string{"/f", "/f/s"}, key.paths)
 }

@@ -19,22 +19,22 @@ func (x *fileTreeNode) EqualTo(y interface{}) bool {
 	return strings.EqualFold(x.name, (y.(*fileTreeNode)).name)
 }
 
+func (x *fileTreeNode) String() string {
+	return x.name
+}
+
 func newFileNodeKey(name string) rbtree.Comparable {
 	n := fileTreeNode{name: name}
 	return &n
 }
 
-func newFileNode(name string) *rbtree.Node {
-	return rbtree.NewNode(newFileNodeKey(name))
-}
-
-func addFileToTree(tree *rbtree.RbTree, file string, path string) {
+func addFileToTree(tree rbtree.RbTree, file string, path string) {
 	found, ok := tree.Search(newFileNodeKey(file))
 
 	if ok {
-		addPathToFileNode(found, path)
+		addPathToFileNode(found.Key(), path)
 	} else {
-		n := newFileNode(file)
+		n := newFileNodeKey(file)
 
 		addPathToFileNode(n, path)
 
@@ -42,17 +42,16 @@ func addFileToTree(tree *rbtree.RbTree, file string, path string) {
 	}
 }
 
-func addPathToFileNode(n *rbtree.Node, path string) {
-	key := n.Key.(*fileTreeNode)
+func addPathToFileNode(n rbtree.Comparable, path string) {
+	key := n.(*fileTreeNode)
 	key.paths = append(key.paths, path)
-	n.Key = key
 }
 
-func getFilePathsFromTree(tree *rbtree.RbTree, file string) ([]string, bool) {
+func getFilePathsFromTree(tree rbtree.RbTree, file string) ([]string, bool) {
 	found, ok := tree.Search(newFileNodeKey(file))
 	if !ok {
 		return nil, false
 	}
-	key := found.Key.(*fileTreeNode)
+	key := found.Key().(*fileTreeNode)
 	return key.paths, true
 }
