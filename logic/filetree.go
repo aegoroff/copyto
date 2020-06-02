@@ -23,22 +23,16 @@ func (x *fileTreeNode) String() string {
 	return x.name
 }
 
-func newFileNodeKey(name string) rbtree.Comparable {
-	n := fileTreeNode{name: name}
-	return &n
-}
-
 func addFileToTree(tree rbtree.RbTree, file string, path string) {
-	found, ok := tree.Search(newFileNodeKey(file))
+	node := fileTreeNode{name: file}
+	found, ok := tree.Search(&node)
 
 	if ok {
 		addPathToFileNode(found.Key(), path)
 	} else {
-		n := newFileNodeKey(file)
+		addPathToFileNode(&node, path)
 
-		addPathToFileNode(n, path)
-
-		tree.Insert(n)
+		tree.Insert(&node)
 	}
 }
 
@@ -48,7 +42,7 @@ func addPathToFileNode(n rbtree.Comparable, path string) {
 }
 
 func getFilePathsFromTree(tree rbtree.RbTree, file string) ([]string, bool) {
-	found, ok := tree.Search(newFileNodeKey(file))
+	found, ok := tree.Search(&fileTreeNode{name: file})
 	if !ok {
 		return nil, false
 	}
