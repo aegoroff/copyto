@@ -7,8 +7,14 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sort"
 )
+
+// RunUnderWindows gets whether code running under Microsoft Windows
+func RunUnderWindows() bool {
+	return runtime.GOOS == "windows"
+}
 
 func walkDirBreadthFirst(path string, fs afero.Fs, action func(parent string, entry os.FileInfo)) {
 	queue := make([]string, 0)
