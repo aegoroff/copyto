@@ -17,7 +17,7 @@ type copyResult struct {
 	NotFoundInSource int64
 }
 
-// Files filter
+// FileFilter defines files filteing structure
 type FileFilter struct {
 	// Only files whose names match the pattern specified
 	Include string
