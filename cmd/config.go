@@ -44,7 +44,7 @@ func init() {
 	rootCmd.AddCommand(configCmd)
 
 	configCmd.Flags().StringP(pathParamName, "p", "", "Path to configuration file (required)")
-	configCmd.MarkFlagRequired(pathParamName)
+	_ = configCmd.MarkFlagRequired(pathParamName)
 }
 
 func runConfigCmd(path string, fs afero.Fs, w io.Writer) error {
@@ -54,7 +54,7 @@ func runConfigCmd(path string, fs afero.Fs, w io.Writer) error {
 	}
 	for k, v := range config.Definitions {
 		source := findSource(v, config.Sources)
-		fmt.Fprintf(w, " Section: %s\n Source: %s\n Target: %s\n", k, source, v.Target)
+		_, _ = fmt.Fprintf(w, " Section: %s\n Source: %s\n Target: %s\n", k, source, v.Target)
 		flt := logic.FileFilter{
 			Include: v.Include,
 			Exclude: v.Exclude,

@@ -37,6 +37,6 @@ func init() {
 	cmdlineCmd.Flags().StringP(tgtParamName, "t", "", "Path to the target folder, to copy (sync) data to (required)")
 	cmdlineCmd.Flags().StringP(inclParamName, "i", "", "Include only files whose names match the pattern specified by the option")
 	cmdlineCmd.Flags().StringP(exclParamName, "e", "", "Exclude files whose names match pattern specified by the option")
-	cmdlineCmd.MarkFlagRequired(srcParamName)
-	cmdlineCmd.MarkFlagRequired(tgtParamName)
+	_ = cmdlineCmd.MarkFlagRequired(srcParamName)
+	_ = cmdlineCmd.MarkFlagRequired(tgtParamName)
 }
