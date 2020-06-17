@@ -3,7 +3,7 @@ copyto
 
 [![Build status](https://ci.appveyor.com/api/projects/status/21801axnoh4oxadf?svg=true)](https://ci.appveyor.com/project/aegoroff/copyto) [![codecov](https://codecov.io/gh/aegoroff/copyto/branch/master/graph/badge.svg)](https://codecov.io/gh/aegoroff/copyto) [![Go Report Card](https://goreportcard.com/badge/github.com/aegoroff/copyto)](https://goreportcard.com/report/github.com/aegoroff/copyto)
 
-**copyto** is a small commandline app written in Go that allows you to easily one way
+**copyto** is a small command line app written in Go that allows you to easily one way
 sync files between source folder and target folder. i.e. all files from source that
 matches (by relative path) corresponding files in target folder will be copied from source folder to
 target one.
