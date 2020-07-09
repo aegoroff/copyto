@@ -50,11 +50,10 @@ func Test_getFilePathsFromTree(t *testing.T) {
 	var tests = []struct {
 		file   string
 		result bool
-		len    int
 	}{
-		{"f", true, 1},
-		{"F", true, 1},
-		{"f1", false, 0},
+		{"f", true},
+		{"F", RunUnderWindows()},
+		{"f1", false},
 	}
 
 	for _, test := range tests {
@@ -63,6 +62,10 @@ func Test_getFilePathsFromTree(t *testing.T) {
 
 		// Assert
 		ass.Equal(test.result, ok)
-		ass.Equal(test.len, len(paths))
+		if ok {
+			ass.Equal(1, len(paths))
+		} else {
+			ass.Equal(0, len(paths))
+		}
 	}
 }

@@ -2,6 +2,7 @@ package logic
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"os"
@@ -117,13 +118,13 @@ func Test_copyTreeTargetsContainMissingSourcesElements_OnlyFoundCopiedFromSource
 	bytes2, _ := afero.ReadFile(appFS, "t/p1/f2.txt")
 	ass.Equal("/s/p1/f1.txt", string(bytes1))
 	ass.Equal("/t/p1/f2.txt", string(bytes2))
-	ass.Equal(`   Found files that present in target but missing in source:
-     \p1\f2.txt
+	ass.Equal(fmt.Sprintf(`   Found files that present in target but missing in source:
+     %cp1%cf2.txt
 
    Total copied:                              1
    Present in target but not found in source: 1
 
-`, buf.String())
+`, os.PathSeparator, os.PathSeparator), buf.String())
 }
 
 func Test_copyTreeSourcesContainsSameNameFilesButInSubfolders_OnlyExactMatchedCopiedFromSources(t *testing.T) {
