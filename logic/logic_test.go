@@ -262,8 +262,16 @@ func Test_copyTreeVerboseTrue_EachCopiedFileOutput(t *testing.T) {
 	appFS.MkdirAll("s/p1", 0755)
 	appFS.MkdirAll("t/p1", 0755)
 
+	var target string
+
+	if RunUnderWindows() {
+		target = "t/p1/F1.txt"
+	} else {
+		target = "t/p1/f1.txt"
+	}
+
 	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, "t/p1/F1.txt", []byte("/t/p1/F1.txt"), 0644)
+	afero.WriteFile(appFS, target, []byte("/t/p1/F1.txt"), 0644)
 
 	buf := bytes.NewBufferString("")
 	flt := FileFilter{}
@@ -272,12 +280,12 @@ func Test_copyTreeVerboseTrue_EachCopiedFileOutput(t *testing.T) {
 	CopyFileTree("s", "t", flt, appFS, buf, true)
 
 	// Assert
-	ass.Equal(`[s\p1\f1.txt] copied to [t\p1\F1.txt]
+	ass.Equal(fmt.Sprintf(`[s%cp1%cf1.txt] copied to [%s]
 
    Total copied:                              1
    Present in target but not found in source: 0
 
-`, buf.String())
+`, os.PathSeparator, os.PathSeparator, target), buf.String())
 }
 
 func Test_copyTreeUnexistTarget_NoFilesCopied(t *testing.T) {
