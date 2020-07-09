@@ -230,7 +230,7 @@ func Test_copyTreeEmptyTargets_NothingCopied(t *testing.T) {
 	ass.Equal(0, len(items))
 }
 
-func Test_copyTreeDifferentCase_DifferentCaseFilesCopied(t *testing.T) {
+func Test_copyTreeDifferentCase_DifferentCaseFilesCopiedDependsOnPlatform(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
 
@@ -239,8 +239,10 @@ func Test_copyTreeDifferentCase_DifferentCaseFilesCopied(t *testing.T) {
 	appFS.MkdirAll("s/p1", 0755)
 	appFS.MkdirAll("t/p1", 0755)
 
-	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, "t/p1/F1.txt", []byte("/t/p1/F1.txt"), 0644)
+	srcContent := "/s/p1/f1.txt"
+	tgtContent := "/t/p1/F1.txt"
+	afero.WriteFile(appFS, "s/p1/f1.txt", []byte(srcContent), 0644)
+	afero.WriteFile(appFS, "t/p1/F1.txt", []byte(tgtContent), 0644)
 
 	buf := bytes.NewBufferString("")
 	flt := FileFilter{}
@@ -250,7 +252,12 @@ func Test_copyTreeDifferentCase_DifferentCaseFilesCopied(t *testing.T) {
 
 	// Assert
 	bytes1, _ := afero.ReadFile(appFS, "t/p1/F1.txt")
-	ass.Equal("/s/p1/f1.txt", string(bytes1))
+
+	if RunUnderWindows() {
+		ass.Equal(srcContent, string(bytes1))
+	} else {
+		ass.Equal(tgtContent, string(bytes1))
+	}
 }
 
 func Test_copyTreeVerboseTrue_EachCopiedFileOutput(t *testing.T) {
@@ -265,13 +272,13 @@ func Test_copyTreeVerboseTrue_EachCopiedFileOutput(t *testing.T) {
 	var target string
 
 	if RunUnderWindows() {
-		target = "t/p1/F1.txt"
+		target = "F1"
 	} else {
-		target = "t/p1/f1.txt"
+		target = "f1"
 	}
 
 	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, target, []byte("/t/p1/F1.txt"), 0644)
+	afero.WriteFile(appFS, fmt.Sprintf("t/p1/%s.txt", target), []byte("/t/p1/F1.txt"), 0644)
 
 	buf := bytes.NewBufferString("")
 	flt := FileFilter{}
@@ -280,12 +287,12 @@ func Test_copyTreeVerboseTrue_EachCopiedFileOutput(t *testing.T) {
 	CopyFileTree("s", "t", flt, appFS, buf, true)
 
 	// Assert
-	ass.Equal(fmt.Sprintf(`[s%cp1%cf1.txt] copied to [%s]
+	ass.Equal(fmt.Sprintf(`[s%cp1%cf1.txt] copied to [t%cp1%c%s.txt]
 
    Total copied:                              1
    Present in target but not found in source: 0
 
-`, os.PathSeparator, os.PathSeparator, target), buf.String())
+`, os.PathSeparator, os.PathSeparator, os.PathSeparator, os.PathSeparator, target), buf.String())
 }
 
 func Test_copyTreeUnexistTarget_NoFilesCopied(t *testing.T) {
