@@ -2,8 +2,6 @@ package logic
 
 import (
 	"github.com/aegoroff/godatastruct/rbtree"
-	"github.com/akutz/sortfold"
-	"strings"
 )
 
 type fileTreeNode struct {
@@ -12,19 +10,11 @@ type fileTreeNode struct {
 }
 
 func (x *fileTreeNode) LessThan(y interface{}) bool {
-	if RunUnderWindows() {
-		return sortfold.CompareFold(x.name, (y.(*fileTreeNode)).name) < 0
-	}
-
-	return x.name < (y.(*fileTreeNode)).name
+	return less(x.String(), (y.(*fileTreeNode)).String())
 }
 
 func (x *fileTreeNode) EqualTo(y interface{}) bool {
-	if RunUnderWindows() {
-		return strings.EqualFold(x.name, (y.(*fileTreeNode)).name)
-	}
-
-	return x.name == (y.(*fileTreeNode)).name
+	return equal(x.String(), (y.(*fileTreeNode)).String())
 }
 
 func (x *fileTreeNode) String() string {

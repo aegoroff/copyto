@@ -30,7 +30,7 @@ func Test_coptyfiletreeAllTargetFilesPresentInSource_AllCopied(t *testing.T) {
 	afero.WriteFile(appFS, "t/p1/p2/f2.txt", []byte("/t/p1/p2/f2.txt"), 0644)
 
 	buf := bytes.NewBufferString("")
-	flt := FileFilter{}
+	flt := NewFilter("", "")
 
 	// Act
 	CopyFileTree("s", "t", flt, appFS, buf, false)
@@ -72,7 +72,7 @@ func Test_copyTreeSourcesMoreThenTargets_OnlyMathesCopiedFromSources(t *testing.
 
 	buf := bytes.NewBufferString("")
 
-	flt := FileFilter{}
+	flt := NewFilter("", "")
 
 	// Act
 	CopyFileTree("s", "t", flt, appFS, buf, false)
@@ -108,7 +108,7 @@ func Test_copyTreeTargetsContainMissingSourcesElements_OnlyFoundCopiedFromSource
 	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
 	buf := bytes.NewBufferString("")
-	flt := FileFilter{}
+	flt := NewFilter("", "")
 
 	// Act
 	CopyFileTree("s", "t", flt, appFS, buf, false)
@@ -144,7 +144,7 @@ func Test_copyTreeSourcesContainsSameNameFilesButInSubfolders_OnlyExactMatchedCo
 	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
 	buf := bytes.NewBufferString("")
-	flt := FileFilter{}
+	flt := NewFilter("", "")
 
 	// Act
 	CopyFileTree("s", "t", flt, appFS, buf, false)
@@ -171,7 +171,7 @@ func Test_copyTreeSourcesContainsNoMatchingFiles_NothingCopied(t *testing.T) {
 	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
 	buf := bytes.NewBufferString("")
-	flt := FileFilter{}
+	flt := NewFilter("", "")
 
 	// Act
 	CopyFileTree("s", "t", flt, appFS, buf, false)
@@ -196,7 +196,7 @@ func Test_copyTreeEmptySources_NothingCopied(t *testing.T) {
 	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
 	buf := bytes.NewBufferString("")
-	flt := FileFilter{}
+	flt := NewFilter("", "")
 
 	// Act
 	CopyFileTree("s", "t", flt, appFS, buf, false)
@@ -220,7 +220,7 @@ func Test_copyTreeEmptyTargets_NothingCopied(t *testing.T) {
 	afero.WriteFile(appFS, "s/p1/f3.txt", []byte("/s/p1/f3.txt"), 0644)
 
 	buf := bytes.NewBufferString("")
-	flt := FileFilter{}
+	flt := NewFilter("", "")
 
 	// Act
 	CopyFileTree("s", "t", flt, appFS, buf, false)
@@ -245,7 +245,7 @@ func Test_copyTreeDifferentCase_DifferentCaseFilesCopiedDependsOnPlatform(t *tes
 	afero.WriteFile(appFS, "t/p1/F1.txt", []byte(tgtContent), 0644)
 
 	buf := bytes.NewBufferString("")
-	flt := FileFilter{}
+	flt := NewFilter("", "")
 
 	// Act
 	CopyFileTree("s", "t", flt, appFS, buf, false)
@@ -281,7 +281,7 @@ func Test_copyTreeVerboseTrue_EachCopiedFileOutput(t *testing.T) {
 	afero.WriteFile(appFS, fmt.Sprintf("t/p1/%s.txt", target), []byte("/t/p1/F1.txt"), 0644)
 
 	buf := bytes.NewBufferString("")
-	flt := FileFilter{}
+	flt := NewFilter("", "")
 
 	// Act
 	CopyFileTree("s", "t", flt, appFS, buf, true)
@@ -308,7 +308,7 @@ func Test_copyTreeUnexistTarget_NoFilesCopied(t *testing.T) {
 	afero.WriteFile(appFS, "t/p1/F1.txt", []byte("/t/p1/F1.txt"), 0644)
 
 	buf := bytes.NewBufferString("")
-	flt := FileFilter{}
+	flt := NewFilter("", "")
 
 	// Act
 	CopyFileTree("s", "t1", flt, appFS, buf, false)

@@ -17,16 +17,8 @@ type copyResult struct {
 	NotFoundInSource int64
 }
 
-// FileFilter defines files filteing structure
-type FileFilter struct {
-	// Only files whose names match the pattern specified
-	Include string
-	// Exclude files whose names match pattern specified
-	Exclude string
-}
-
 // CopyFileTree does files tree coping
-func CopyFileTree(source, target string, filter FileFilter, fs afero.Fs, w io.Writer, verbose bool) {
+func CopyFileTree(source, target string, filter Filter, fs afero.Fs, w io.Writer, verbose bool) {
 
 	srcCh := make(chan *string, 1024)
 	tgtCh := make(chan *string, 1024)
@@ -84,7 +76,7 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 			for _, src := range sources {
 				normalizedSrc := strings.Replace(src, sourceBase, "", 1)
 
-				if strings.EqualFold(normalizedTgt, normalizedSrc) {
+				if equal(normalizedTgt, normalizedSrc) {
 					if err := copyFile(src, tgt, fs); err != nil {
 						log.Printf("%v", err)
 					} else if verbose {
@@ -137,13 +129,13 @@ func createTrees(sourceCh <-chan *string, targetCh <-chan *string) (rbtree.RbTre
 	return sourcesTree, targetsTree
 }
 
-func readDirectory(dir string, filter FileFilter, fs afero.Fs, ch chan<- *string) {
+func readDirectory(dir string, filter Filter, fs afero.Fs, ch chan<- *string) {
 	walkDirBreadthFirst(dir, fs, func(parent string, entry os.FileInfo) {
 		if entry.IsDir() {
 			return
 		}
 
-		if filterFile(entry.Name(), filter.Include, filter.Exclude) {
+		if filter.Skip(entry.Name()) {
 			return
 		}
 
@@ -151,23 +143,4 @@ func readDirectory(dir string, filter FileFilter, fs afero.Fs, ch chan<- *string
 		ch <- &path
 	})
 	close(ch)
-}
-
-func filterFile(file string, include string, exclude string) bool {
-	isInclude := matchPathPattern(include, file, true)
-	isExclude := matchPathPattern(exclude, file, false)
-
-	return !isInclude || isExclude
-}
-
-// Returns resultIfError in case of empty pattern or pattern parsing error
-func matchPathPattern(pattern string, file string, resultIfError bool) bool {
-	result, err := filepath.Match(pattern, file)
-	if err != nil {
-		log.Printf("%v", err)
-		result = resultIfError
-	} else if len(pattern) == 0 {
-		result = resultIfError
-	}
-	return result
 }

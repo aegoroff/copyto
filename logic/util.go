@@ -2,6 +2,7 @@ package logic
 
 import (
 	"fmt"
+	"github.com/akutz/sortfold"
 	"github.com/spf13/afero"
 	"io"
 	"log"
@@ -9,11 +10,30 @@ import (
 	"path/filepath"
 	"runtime"
 	"sort"
+	"strings"
 )
 
 // RunUnderWindows gets whether code running under Microsoft Windows
 func RunUnderWindows() bool {
 	return runtime.GOOS == "windows"
+}
+
+// equal compares paths depends on OS
+func equal(s1, s2 string) bool {
+	if RunUnderWindows() {
+		return strings.EqualFold(s1, s2)
+	}
+
+	return s1 == s2
+}
+
+// less compares paths depends on OS
+func less(s1, s2 string) bool {
+	if RunUnderWindows() {
+		return sortfold.CompareFold(s1, s2) < 0
+	}
+
+	return s1 < s2
 }
 
 func walkDirBreadthFirst(path string, fs afero.Fs, action func(parent string, entry os.FileInfo)) {
