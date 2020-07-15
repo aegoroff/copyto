@@ -57,21 +57,22 @@ func copyTree(targetCh <-chan *string, source string, target string, verbose boo
 	}
 
 	targetsTree.Ascend(func(n rbtree.Node) bool {
-		tgt := n.Key()
-		src := filepath.Join(source, tgt.String())
+		relativePath := n.Key().String()
+		src := filepath.Join(source, relativePath)
+		tgt := filepath.Join(target, relativePath)
 
 		_, err := fs.Stat(src)
 		if err == nil {
-			dst := filepath.Join(target, tgt.String())
-			if err := copyFile(src, dst, fs); err != nil {
+
+			if err := copyFile(src, tgt, fs); err != nil {
 				log.Printf("%v", err)
 			} else if verbose {
-				_, _ = fmt.Fprintf(w, "[%s] copied to [%s]\n", src, dst)
+				_, _ = fmt.Fprintf(w, "[%s] copied to [%s]\n", src, tgt)
 			}
 			result.TotalCopied++
 		} else {
 			result.NotFoundInSource++
-			missing = append(missing, tgt.String())
+			missing = append(missing, relativePath)
 		}
 
 		return true
