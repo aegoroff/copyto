@@ -61,9 +61,8 @@ func copyTree(targetCh <-chan *string, source string, target string, verbose boo
 		src := filepath.Join(source, relativePath)
 		tgt := filepath.Join(target, relativePath)
 
-		_, err := fs.Stat(src)
-		if err == nil {
-
+		ok, _ := afero.Exists(fs, src)
+		if ok {
 			if err := copyFile(src, tgt, fs); err != nil {
 				log.Printf("%v", err)
 			} else if verbose {
