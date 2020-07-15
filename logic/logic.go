@@ -16,6 +16,22 @@ type copyResult struct {
 	NotFoundInSource int64
 }
 
+type file struct {
+	name string
+}
+
+func (f *file) String() string {
+	return f.name
+}
+
+func (f *file) LessThan(y interface{}) bool {
+	return less(f.String(), (y.(*file)).String())
+}
+
+func (f *file) EqualTo(y interface{}) bool {
+	return equal(f.String(), (y.(*file)).String())
+}
+
 // CopyFileTree does files tree coping
 func CopyFileTree(source, target string, filter Filter, fs afero.Fs, w io.Writer, verbose bool) {
 
@@ -62,6 +78,13 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, source string, t
 	targetsTree.Ascend(func(n rbtree.Node) bool {
 		node := n.Key().(*fileTreeNode)
 		sources, ok := getFilePathsFromTree(sourcesTree, node.name)
+		srcFiles := rbtree.NewRbTree()
+
+		for _, src := range sources {
+			// cut source folder
+			normalizedSrc := src[len(source):]
+			srcFiles.Insert(&file{name: normalizedSrc})
+		}
 
 		for _, tgt := range node.paths {
 			// cut target folder
@@ -72,23 +95,18 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, source string, t
 				continue
 			}
 
-			found := false
-			for _, src := range sources {
-				// cut source folder
-				normalizedSrc := src[len(source):]
+			n := &file{name: normalizedTgt}
+			_, ok := srcFiles.Search(&file{name: normalizedTgt})
 
-				if equal(normalizedTgt, normalizedSrc) {
-					if err := copyFile(src, tgt, fs); err != nil {
-						log.Printf("%v", err)
-					} else if verbose {
-						_, _ = fmt.Fprintf(w, "[%s] copied to [%s]\n", src, tgt)
-					}
-					result.TotalCopied++
-					found = true
-					break
+			if ok {
+				src := filepath.Join(source, n.String())
+				if err := copyFile(src, tgt, fs); err != nil {
+					log.Printf("%v", err)
+				} else if verbose {
+					_, _ = fmt.Fprintf(w, "[%s] copied to [%s]\n", src, tgt)
 				}
-			}
-			if !found {
+				result.TotalCopied++
+			} else {
 				result.NotFoundInSource++
 				missing = append(missing, normalizedTgt)
 			}
