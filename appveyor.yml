@@ -32,7 +32,7 @@ build_script:
   - gox -osarch="linux/amd64 linux/arm linux/arm64 linux/386 darwin/amd64 windows/amd64 windows/386 freebsd/386 freebsd/amd64 freebsd/arm openbsd/386 openbsd/amd64 netbsd/386 netbsd/amd64 solaris/amd64" -ldflags "-X copyto/cmd.Version=%APPVEYOR_BUILD_VERSION%" copyto
 
 test_script:
-  - go test -coverprofile=coverage.txt -coverpkg copyto/logic/internal/sys,copyto/cmd -covermode=atomic copyto/...
+  - go test -coverprofile=coverage.txt -coverpkg copyto/logic,copyto/logic/internal/sys,copyto/cmd -covermode=atomic copyto/...
 
 after_test:
   - ps: |
