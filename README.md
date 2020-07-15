@@ -1,6 +1,7 @@
 copyto
 ======
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c3518056c9b642f291c1ee83cc868c95)](https://app.codacy.com/manual/egoroff/copyto?utm_source=github.com&utm_medium=referral&utm_content=aegoroff/copyto&utm_campaign=Badge_Grade_Dashboard)
 [![Build status](https://ci.appveyor.com/api/projects/status/21801axnoh4oxadf?svg=true)](https://ci.appveyor.com/project/aegoroff/copyto) [![codecov](https://codecov.io/gh/aegoroff/copyto/branch/master/graph/badge.svg)](https://codecov.io/gh/aegoroff/copyto) [![Go Report Card](https://goreportcard.com/badge/github.com/aegoroff/copyto)](https://goreportcard.com/report/github.com/aegoroff/copyto)
 
 **copyto** is a small command line app written in Go that allows you to easily one way
