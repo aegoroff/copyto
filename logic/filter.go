@@ -33,38 +33,27 @@ type matcher interface {
 	match(file string) bool
 }
 
-type includer struct {
-	pattern string
+func newExcluder(pattern string) matcher {
+	return &matching{pattern: pattern, resultIfError: false}
 }
 
 func newIncluder(pattern string) matcher {
-	return &includer{pattern: pattern}
+	return &matching{pattern: pattern, resultIfError: true}
 }
 
-func (i *includer) match(file string) bool {
-	return matchPathPattern(i.pattern, file, true)
-}
-
-type excluder struct {
-	pattern string
-}
-
-func newExcluder(pattern string) matcher {
-	return &excluder{pattern: pattern}
-}
-
-func (e *excluder) match(file string) bool {
-	return matchPathPattern(e.pattern, file, false)
+type matching struct {
+	pattern       string
+	resultIfError bool
 }
 
 // Returns resultIfError in case of empty pattern or pattern parsing error
-func matchPathPattern(pattern string, file string, resultIfError bool) bool {
-	result, err := filepath.Match(pattern, file)
+func (m *matching) match(file string) bool {
+	result, err := filepath.Match(m.pattern, file)
 	if err != nil {
 		log.Printf("%v", err)
-		result = resultIfError
-	} else if len(pattern) == 0 {
-		result = resultIfError
+		result = m.resultIfError
+	} else if len(m.pattern) == 0 {
+		result = m.resultIfError
 	}
 	return result
 }
