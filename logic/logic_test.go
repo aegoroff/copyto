@@ -2,6 +2,7 @@ package logic
 
 import (
 	"bytes"
+	"copyto/logic/internal/sys"
 	"fmt"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
@@ -316,7 +317,7 @@ func Test_copyFileUnexistSource_ErrReturned(t *testing.T) {
 	afero.WriteFile(appFS, "t/p1/F1.txt", []byte("/t/p1/F1.txt"), 0644)
 
 	// Act
-	err := copyFile("s/p1/F1.txt", "t/p1/F1.txt", appFS)
+	err := sys.CopyFile("s/p1/F1.txt", "t/p1/F1.txt", appFS)
 
 	// Assert
 	ass.NotNil(err)
@@ -335,7 +336,7 @@ func Test_copyFileSourceIsDir_ErrReturned(t *testing.T) {
 	afero.WriteFile(appFS, "t/p1/F1.txt", []byte("/t/p1/F1.txt"), 0644)
 
 	// Act
-	err := copyFile("t/p1", "t/p1/F1.txt", appFS)
+	err := sys.CopyFile("t/p1", "t/p1/F1.txt", appFS)
 
 	// Assert
 	ass.NotNil(err)
