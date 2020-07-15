@@ -230,7 +230,7 @@ func Test_copyTreeEmptyTargets_NothingCopied(t *testing.T) {
 	ass.Equal(0, len(items))
 }
 
-func Test_copyTreeDifferentCase_DifferentCaseFilesCopiedDependsOnPlatform(t *testing.T) {
+func Test_copyTreeDifferentCase_FilesNotCopied(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
 
@@ -252,12 +252,7 @@ func Test_copyTreeDifferentCase_DifferentCaseFilesCopiedDependsOnPlatform(t *tes
 
 	// Assert
 	bytes1, _ := afero.ReadFile(appFS, "t/p1/F1.txt")
-
-	if RunUnderWindows() {
-		ass.Equal(srcContent, string(bytes1))
-	} else {
-		ass.Equal(tgtContent, string(bytes1))
-	}
+	ass.Equal(tgtContent, string(bytes1))
 }
 
 func Test_copyTreeVerboseTrue_EachCopiedFileOutput(t *testing.T) {
