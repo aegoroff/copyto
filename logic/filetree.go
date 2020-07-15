@@ -9,11 +9,11 @@ func (f *file) String() string {
 }
 
 func (f *file) LessThan(y interface{}) bool {
-	return less(f.String(), (y.(*file)).String())
+	return f.String() < (y.(*file)).String()
 }
 
 func (f *file) EqualTo(y interface{}) bool {
-	return equal(f.String(), (y.(*file)).String())
+	return f.String() == (y.(*file)).String()
 }
 
 // newFile creates normalized (i.e. without base part) file node
