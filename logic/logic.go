@@ -32,6 +32,12 @@ func (f *file) EqualTo(y interface{}) bool {
 	return equal(f.String(), (y.(*file)).String())
 }
 
+// newFile creates normalized (i.e. without base part) file node
+func newFile(base, path string) *file {
+	normalized := path[len(base):]
+	return &file{name: normalized}
+}
+
 // CopyFileTree does files tree coping
 func CopyFileTree(source, target string, filter Filter, fs afero.Fs, w io.Writer, verbose bool) {
 
@@ -81,25 +87,21 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, source string, t
 		srcFiles := rbtree.NewRbTree()
 
 		for _, src := range sources {
-			// cut source folder
-			normalizedSrc := src[len(source):]
-			srcFiles.Insert(&file{name: normalizedSrc})
+			s := newFile(source, src)
+			srcFiles.Insert(s)
 		}
 
 		for _, tgt := range node.paths {
-			// cut target folder
-			normalizedTgt := tgt[len(target):]
+			t := newFile(target, tgt)
 			if !ok {
 				result.NotFoundInSource++
-				missing = append(missing, normalizedTgt)
+				missing = append(missing, t.String())
 				continue
 			}
-
-			n := &file{name: normalizedTgt}
-			_, ok := srcFiles.Search(&file{name: normalizedTgt})
+			_, ok := srcFiles.Search(t)
 
 			if ok {
-				src := filepath.Join(source, n.String())
+				src := filepath.Join(source, t.String())
 				if err := copyFile(src, tgt, fs); err != nil {
 					log.Printf("%v", err)
 				} else if verbose {
@@ -108,7 +110,7 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, source string, t
 				result.TotalCopied++
 			} else {
 				result.NotFoundInSource++
-				missing = append(missing, normalizedTgt)
+				missing = append(missing, t.String())
 			}
 		}
 
