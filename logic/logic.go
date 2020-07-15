@@ -49,8 +49,7 @@ func printTotals(res copyResult, missing []string, w io.Writer) {
 	_ = report.Execute(w, res)
 }
 
-func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase string, targetBase string, verbose bool, fs afero.Fs, w io.Writer) (copyResult, []string) {
-
+func copyTree(sourceCh <-chan *string, targetCh <-chan *string, source string, target string, verbose bool, fs afero.Fs, w io.Writer) (copyResult, []string) {
 	sourcesTree, targetsTree := createTrees(sourceCh, targetCh)
 
 	var result copyResult
@@ -62,11 +61,11 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 
 	targetsTree.Ascend(func(n rbtree.Node) bool {
 		node := n.Key().(*fileTreeNode)
-		for _, tgt := range node.paths {
-			sources, ok := getFilePathsFromTree(sourcesTree, node.name)
+		sources, ok := getFilePathsFromTree(sourcesTree, node.name)
 
+		for _, tgt := range node.paths {
 			// cut target folder
-			normalizedTgt := tgt[len(targetBase):]
+			normalizedTgt := tgt[len(target):]
 			if !ok {
 				result.NotFoundInSource++
 				missing = append(missing, normalizedTgt)
@@ -76,7 +75,7 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 			found := false
 			for _, src := range sources {
 				// cut source folder
-				normalizedSrc := src[len(sourceBase):]
+				normalizedSrc := src[len(source):]
 
 				if equal(normalizedTgt, normalizedSrc) {
 					if err := copyFile(src, tgt, fs); err != nil {
