@@ -25,7 +25,7 @@ func CopyFileTree(source, target string, filter Filter, fs afero.Fs, w io.Writer
 			return
 		}
 
-		if filter.Skip(f.File.Path) {
+		if filter.Skip(filepath.Base(f.File.Path)) {
 			return
 		}
 
