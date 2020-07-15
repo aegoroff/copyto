@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 	"text/template"
 )
 
@@ -65,7 +64,9 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 		node := n.Key().(*fileTreeNode)
 		for _, tgt := range node.paths {
 			sources, ok := getFilePathsFromTree(sourcesTree, node.name)
-			normalizedTgt := strings.Replace(tgt, targetBase, "", 1)
+
+			// cut target folder
+			normalizedTgt := tgt[len(targetBase):]
 			if !ok {
 				result.NotFoundInSource++
 				missing = append(missing, normalizedTgt)
@@ -74,7 +75,8 @@ func copyTree(sourceCh <-chan *string, targetCh <-chan *string, sourceBase strin
 
 			found := false
 			for _, src := range sources {
-				normalizedSrc := strings.Replace(src, sourceBase, "", 1)
+				// cut source folder
+				normalizedSrc := src[len(sourceBase):]
 
 				if equal(normalizedTgt, normalizedSrc) {
 					if err := copyFile(src, tgt, fs); err != nil {
