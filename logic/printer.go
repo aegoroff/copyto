@@ -21,6 +21,11 @@ type Printer interface {
 	ResetColor()
 }
 
+// NewPrinter creates new Printer interface instance
+func NewPrinter(w io.Writer) Printer {
+	return &prn{w: w}
+}
+
 type prn struct {
 	w io.Writer
 }
@@ -31,11 +36,6 @@ func (p *prn) SetColor(c color.Color) {
 
 func (p *prn) ResetColor() {
 	_, _ = color.Reset()
-}
-
-// NewPrinter creates new Printer interface instance
-func NewPrinter(w io.Writer) Printer {
-	return &prn{w: w}
 }
 
 func (p *prn) W() io.Writer {
