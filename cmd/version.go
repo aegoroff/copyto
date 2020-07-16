@@ -7,7 +7,7 @@ import (
 )
 
 // Version defines program version
-var Version = "0.7.0"
+var Version = "0.8.0"
 
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
