@@ -109,6 +109,7 @@ File *f4.rar* will not be copied because it is not exists in the target folder:
      \f5.xlsx
 
    Total copied:                              3
+   Copy errors:                               0
    Present in target but not found in source: 1
 ```
 
