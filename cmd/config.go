@@ -2,11 +2,9 @@ package cmd
 
 import (
 	"copyto/logic"
-	"github.com/gookit/color"
 	"github.com/pelletier/go-toml"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	"io"
 )
 
 type tomlConfig struct {
@@ -36,7 +34,7 @@ var configCmd = &cobra.Command{
 	Short:   "Use TOML configuration file to configure required application parameters",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		path := cmd.Flag(pathParamName)
-		return runConfigCmd(path.Value.String(), appFileSystem, appWriter)
+		return runConfigCmd(path.Value.String(), appFileSystem)
 	},
 }
 
@@ -47,16 +45,16 @@ func init() {
 	_ = configCmd.MarkFlagRequired(pathParamName)
 }
 
-func runConfigCmd(path string, fs afero.Fs, w io.Writer) error {
+func runConfigCmd(path string, fs afero.Fs) error {
 	var config tomlConfig
 	if err := decodeConfig(path, fs, &config); err != nil {
 		return err
 	}
 	for k, v := range config.Definitions {
 		source := findSource(v, config.Sources)
-		color.Fprintf(w, " <gray>Section:</> %s\n <gray>Source:</> %s\n <gray>Target:</> %s\n", k, source, v.Target)
+		appPrinter.Cprint(" <gray>Section:</> %s\n <gray>Source:</> %s\n <gray>Target:</> %s\n", k, source, v.Target)
 		flt := logic.NewFilter(v.Include, v.Exclude)
-		logic.CopyFileTree(source, v.Target, flt, fs, w, Verbose)
+		logic.CopyFileTree(source, v.Target, flt, fs, appPrinter, Verbose)
 	}
 
 	return nil

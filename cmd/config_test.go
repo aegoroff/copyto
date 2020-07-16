@@ -2,10 +2,46 @@ package cmd
 
 import (
 	"bytes"
+	"copyto/logic"
+	"fmt"
+	"github.com/gookit/color"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
+	"io"
 	"testing"
 )
+
+type mockprn struct {
+	w *bytes.Buffer
+}
+
+func (m *mockprn) String() string {
+	return m.w.String()
+}
+
+func newMockPrn() logic.Printer {
+	return &mockprn{w: bytes.NewBufferString("")}
+}
+
+func (m *mockprn) Cprint(format string, a ...interface{}) {
+	str := fmt.Sprintf(format, a...)
+	_, _ = fmt.Fprintf(m.w, str)
+}
+
+func (m *mockprn) Print(format string, a ...interface{}) {
+	str := fmt.Sprintf(format, a...)
+	_, _ = fmt.Fprintf(m.w, str)
+}
+
+func (m *mockprn) W() io.Writer {
+	return m.w
+}
+
+func (m *mockprn) SetColor(c color.Color) {
+}
+
+func (m *mockprn) ResetColor() {
+}
 
 func Test_ConfNormalCase(t *testing.T) {
 	var tests = []struct {
@@ -53,8 +89,7 @@ title = "test"
 		afero.WriteFile(appFS, targetFilePath, []byte(targetContent), 0644)
 		afero.WriteFile(appFS, configPath, []byte(config), 0644)
 
-		buf := bytes.NewBufferString("")
-		appWriter = buf
+		appPrinter = newMockPrn()
 		appFileSystem = appFS
 
 		// Act
@@ -94,8 +129,7 @@ title = "test"
 	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
 	afero.WriteFile(appFS, "c/config.toml", []byte(config), 0644)
 
-	buf := bytes.NewBufferString("")
-	appWriter = buf
+	appPrinter = newMockPrn()
 	appFileSystem = appFS
 
 	// Act
@@ -127,8 +161,7 @@ title = "test"
 	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
 	afero.WriteFile(appFS, "c/config.toml", []byte(config), 0644)
 
-	buf := bytes.NewBufferString("")
-	appWriter = buf
+	appPrinter = newMockPrn()
 	appFileSystem = appFS
 
 	// Act
@@ -151,8 +184,7 @@ func Test_UnexistConfig_NothingCopied(t *testing.T) {
 	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
 	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
 
-	buf := bytes.NewBufferString("")
-	appWriter = buf
+	appPrinter = newMockPrn()
 	appFileSystem = appFS
 
 	// Act
@@ -202,8 +234,7 @@ title = "test"
 		afero.WriteFile(appFS, targetFilePath, []byte(targetContent), 0644)
 		afero.WriteFile(appFS, configPath, []byte(config), 0644)
 
-		buf := bytes.NewBufferString("")
-		appWriter = buf
+		appPrinter = newMockPrn()
 		appFileSystem = appFS
 
 		// Act
@@ -255,8 +286,7 @@ title = "test"
 		afero.WriteFile(appFS, targetFilePath, []byte(targetContent), 0644)
 		afero.WriteFile(appFS, configPath, []byte(config), 0644)
 
-		buf := bytes.NewBufferString("")
-		appWriter = buf
+		appPrinter = newMockPrn()
 		appFileSystem = appFS
 
 		// Act

@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	"copyto/logic"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	"io"
 	"os"
 )
 
@@ -11,7 +11,7 @@ import (
 var Verbose bool
 
 var appFileSystem = afero.NewOsFs()
-var appWriter io.Writer
+var appPrinter logic.Printer
 
 // rootCmd represents the root command
 var rootCmd = &cobra.Command{
@@ -26,7 +26,7 @@ you to easily one way sync files between source folder and target folder`,
 
 func init() {
 	cobra.MousetrapHelpText = ""
-	appWriter = os.Stdout
+	appPrinter = logic.NewPrinter(os.Stdout)
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "Verbose output")
 }
 

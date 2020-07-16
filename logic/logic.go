@@ -5,7 +5,6 @@ import (
 	"github.com/aegoroff/godatastruct/rbtree"
 	"github.com/gookit/color"
 	"github.com/spf13/afero"
-	"io"
 	"log"
 	"path/filepath"
 	"text/template"
@@ -18,7 +17,7 @@ type copyResult struct {
 }
 
 // CopyFileTree does files tree coping
-func CopyFileTree(source, target string, filter Filter, fs afero.Fs, w io.Writer, verbose bool) {
+func CopyFileTree(source, target string, filter Filter, fs afero.Fs, p Printer, verbose bool) {
 	fileTree := rbtree.NewRbTree()
 
 	sys.Scan(target, fs, func(f *sys.ScanEvent) {
@@ -34,11 +33,11 @@ func CopyFileTree(source, target string, filter Filter, fs afero.Fs, w io.Writer
 		fileTree.Insert(n)
 	})
 
-	res, missing := copyTree(fileTree, source, target, verbose, fs, w)
-	printTotals(res, missing, w)
+	res, missing := copyTree(fileTree, source, target, verbose, fs, p)
+	printTotals(res, missing, p)
 }
 
-func copyTree(targetsTree rbtree.RbTree, source string, target string, verbose bool, fs afero.Fs, w io.Writer) (copyResult, []string) {
+func copyTree(targetsTree rbtree.RbTree, source string, target string, verbose bool, fs afero.Fs, p Printer) (copyResult, []string) {
 	var result copyResult
 	var missing []string
 
@@ -58,7 +57,7 @@ func copyTree(targetsTree rbtree.RbTree, source string, target string, verbose b
 				result.CopyErrors++
 			} else {
 				if verbose {
-					color.Fprintf(w, "   <gray>%s</> copied to <gray>%s</>\n", src, tgt)
+					p.Cprint("   <gray>%s</> copied to <gray>%s</>\n", src, tgt)
 				}
 				result.TotalCopied++
 			}
@@ -73,13 +72,13 @@ func copyTree(targetsTree rbtree.RbTree, source string, target string, verbose b
 	return result, missing
 }
 
-func printTotals(res copyResult, missing []string, w io.Writer) {
+func printTotals(res copyResult, missing []string, p Printer) {
 	if len(missing) > 0 {
-		color.Fprintf(w, "\n   <red>Found files that present in target but missing in source:</>\n")
+		p.Cprint("\n   <red>Found files that present in target but missing in source:</>\n")
 	}
 
 	for _, f := range missing {
-		color.Fprintf(w, "     <gray>%s</>\n", f)
+		p.Cprint("     <gray>%s</>\n", f)
 	}
 
 	const totalTemplate = `
@@ -88,8 +87,8 @@ func printTotals(res copyResult, missing []string, w io.Writer) {
    Present in target but not found in source: {{.NotFoundInSource}}
 
 `
-	_, _ = color.Set(color.FgGreen)
+	p.SetColor(color.FgGreen)
 	var report = template.Must(template.New("copyResult").Parse(totalTemplate))
-	_ = report.Execute(w, res)
-	_, _ = color.Reset()
+	_ = report.Execute(p.W(), res)
+	p.ResetColor()
 }

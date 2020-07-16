@@ -4,11 +4,45 @@ import (
 	"bytes"
 	"copyto/logic/internal/sys"
 	"fmt"
+	"github.com/gookit/color"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
+	"io"
 	"os"
 	"testing"
 )
+
+type mockprn struct {
+	w *bytes.Buffer
+}
+
+func (m *mockprn) String() string {
+	return m.w.String()
+}
+
+func newMockPrn() *mockprn {
+	return &mockprn{w: bytes.NewBufferString("")}
+}
+
+func (m *mockprn) Cprint(format string, a ...interface{}) {
+	str := fmt.Sprintf(format, a...)
+	_, _ = fmt.Fprintf(m.w, str)
+}
+
+func (m *mockprn) Print(format string, a ...interface{}) {
+	str := fmt.Sprintf(format, a...)
+	_, _ = fmt.Fprintf(m.w, str)
+}
+
+func (m *mockprn) W() io.Writer {
+	return m.w
+}
+
+func (m *mockprn) SetColor(c color.Color) {
+}
+
+func (m *mockprn) ResetColor() {
+}
 
 func Test_coptyfiletreeAllTargetFilesPresentInSource_AllCopied(t *testing.T) {
 	// Arrange
@@ -30,7 +64,7 @@ func Test_coptyfiletreeAllTargetFilesPresentInSource_AllCopied(t *testing.T) {
 	afero.WriteFile(appFS, "t/p1/p2/f1.txt", []byte("/t/p1/p2/f1.txt"), 0644)
 	afero.WriteFile(appFS, "t/p1/p2/f2.txt", []byte("/t/p1/p2/f2.txt"), 0644)
 
-	buf := bytes.NewBufferString("")
+	buf := newMockPrn()
 	flt := NewFilter("", "")
 
 	// Act
@@ -76,7 +110,7 @@ func Test_ReadOnlyTargets_NoneCopied(t *testing.T) {
 
 	appFS := afero.NewReadOnlyFs(memfs)
 
-	buf := bytes.NewBufferString("")
+	buf := newMockPrn()
 	flt := NewFilter("", "")
 
 	// Act
@@ -118,7 +152,7 @@ func Test_copyTreeSourcesMoreThenTargets_OnlyMathesCopiedFromSources(t *testing.
 	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
 	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
-	buf := bytes.NewBufferString("")
+	buf := newMockPrn()
 
 	flt := NewFilter("", "")
 
@@ -156,7 +190,7 @@ func Test_copyTreeTargetsContainMissingSourcesElements_OnlyFoundCopiedFromSource
 	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
 	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
-	buf := bytes.NewBufferString("")
+	buf := newMockPrn()
 	flt := NewFilter("", "")
 
 	// Act
@@ -168,8 +202,8 @@ func Test_copyTreeTargetsContainMissingSourcesElements_OnlyFoundCopiedFromSource
 	ass.Equal("/s/p1/f1.txt", string(bytes1))
 	ass.Equal("/t/p1/f2.txt", string(bytes2))
 	ass.Equal(fmt.Sprintf(`
-   Found files that present in target but missing in source:
-     %cp1%cf2.txt
+   <red>Found files that present in target but missing in source:</>
+     <gray>%cp1%cf2.txt</>
 
    Total copied:                              1
    Copy errors:                               0
@@ -194,7 +228,7 @@ func Test_copyTreeSourcesContainsSameNameFilesButInSubfolders_OnlyExactMatchedCo
 	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
 	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
-	buf := bytes.NewBufferString("")
+	buf := newMockPrn()
 	flt := NewFilter("", "")
 
 	// Act
@@ -221,7 +255,7 @@ func Test_copyTreeSourcesContainsNoMatchingFiles_NothingCopied(t *testing.T) {
 	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
 	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
-	buf := bytes.NewBufferString("")
+	buf := newMockPrn()
 	flt := NewFilter("", "")
 
 	// Act
@@ -246,7 +280,7 @@ func Test_copyTreeEmptySources_NothingCopied(t *testing.T) {
 	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
 	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
-	buf := bytes.NewBufferString("")
+	buf := newMockPrn()
 	flt := NewFilter("", "")
 
 	// Act
@@ -270,7 +304,7 @@ func Test_copyTreeEmptyTargets_NothingCopied(t *testing.T) {
 
 	afero.WriteFile(appFS, "s/p1/f3.txt", []byte("/s/p1/f3.txt"), 0644)
 
-	buf := bytes.NewBufferString("")
+	buf := newMockPrn()
 	flt := NewFilter("", "")
 
 	// Act
@@ -295,7 +329,7 @@ func Test_copyTreeDifferentCase_FilesNotCopied(t *testing.T) {
 	afero.WriteFile(appFS, "s/p1/f1.txt", []byte(srcContent), 0644)
 	afero.WriteFile(appFS, "t/p1/F1.txt", []byte(tgtContent), 0644)
 
-	buf := bytes.NewBufferString("")
+	buf := newMockPrn()
 	flt := NewFilter("", "")
 
 	// Act
@@ -318,14 +352,14 @@ func Test_copyTreeVerboseTrue_EachCopiedFileOutput(t *testing.T) {
 	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
 	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/F1.txt"), 0644)
 
-	buf := bytes.NewBufferString("")
+	buf := newMockPrn()
 	flt := NewFilter("", "")
 
 	// Act
 	CopyFileTree("s", "t", flt, appFS, buf, true)
 
 	// Assert
-	ass.Equal(fmt.Sprintf(`   s%cp1%cf1.txt copied to t%cp1%cf1.txt
+	ass.Equal(fmt.Sprintf(`   <gray>s%cp1%cf1.txt</> copied to <gray>t%cp1%cf1.txt</>
 
    Total copied:                              1
    Copy errors:                               0
@@ -346,7 +380,7 @@ func Test_copyTreeUnexistTarget_NoFilesCopied(t *testing.T) {
 	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
 	afero.WriteFile(appFS, "t/p1/F1.txt", []byte("/t/p1/F1.txt"), 0644)
 
-	buf := bytes.NewBufferString("")
+	buf := newMockPrn()
 	flt := NewFilter("", "")
 
 	// Act

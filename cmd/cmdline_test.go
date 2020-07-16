@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bytes"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -35,8 +34,8 @@ func Test_CmdNormalCase(t *testing.T) {
 		afero.WriteFile(appFS, sourceFilePath, []byte(sourceContent), 0644)
 		afero.WriteFile(appFS, targetFilePath, []byte(targetContent), 0644)
 
-		buf := bytes.NewBufferString("")
-		appWriter = buf
+		appPrinter = newMockPrn()
+		mock := appPrinter.(*mockprn)
 		appFileSystem = appFS
 
 		// Act
@@ -51,7 +50,7 @@ func Test_CmdNormalCase(t *testing.T) {
    Copy errors:                               0
    Present in target but not found in source: 0
 
-`, buf.String())
+`, mock.String())
 	}
 }
 
@@ -91,8 +90,7 @@ func Test_CmdFilteringTests(t *testing.T) {
 		afero.WriteFile(appFS, sourceFilePath, []byte(sourceContent), 0644)
 		afero.WriteFile(appFS, targetFilePath, []byte(targetContent), 0644)
 
-		buf := bytes.NewBufferString("")
-		appWriter = buf
+		appPrinter = newMockPrn()
 		appFileSystem = appFS
 
 		// Act

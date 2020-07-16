@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -19,14 +18,14 @@ func Test_Version(t *testing.T) {
 		// Arrange
 		ass := assert.New(t)
 
-		buf := bytes.NewBufferString("")
-		appWriter = buf
+		appPrinter = newMockPrn()
+		mock := appPrinter.(*mockprn)
 
 		// Act
 		rootCmd.SetArgs([]string{test.cmd})
 		rootCmd.Execute()
 
 		// Assert
-		ass.Equal(fmt.Sprintf("copyto v%s\n", Version), buf.String())
+		ass.Equal(fmt.Sprintf("copyto v%s\n", Version), mock.String())
 	}
 }

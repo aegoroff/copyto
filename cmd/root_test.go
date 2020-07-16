@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bytes"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -10,8 +9,7 @@ func Test_Root(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
 
-	buf := bytes.NewBufferString("")
-	appWriter = buf
+	appPrinter = newMockPrn()
 
 	// Act
 	rootCmd.SetArgs([]string{})
@@ -25,8 +23,7 @@ func Test_RootUnknownCommand(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
 
-	buf := bytes.NewBufferString("")
-	appWriter = buf
+	appPrinter = newMockPrn()
 
 	// Act
 	rootCmd.SetArgs([]string{"xxx"})
@@ -38,8 +35,7 @@ func Test_RootUnknownCommand(t *testing.T) {
 
 func Test_Execute(t *testing.T) {
 	// Arrange
-	buf := bytes.NewBufferString("")
-	appWriter = buf
+	appPrinter = newMockPrn()
 
 	// Act
 	rootCmd.SetArgs([]string{})
