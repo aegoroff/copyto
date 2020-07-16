@@ -48,6 +48,7 @@ func Test_coptyfiletreeAllTargetFilesPresentInSource_AllCopied(t *testing.T) {
 	ass.Equal("/s/p1/p2/f2.txt", string(bytes4))
 	ass.Equal(`
    Total copied:                              4
+   Copy errors:                               0
    Present in target but not found in source: 0
 
 `, buf.String())
@@ -93,6 +94,7 @@ func Test_ReadOnlyTargets_NoneCopied(t *testing.T) {
 	ass.Equal("/t/p1/p2/f2.txt", string(bytes4))
 	ass.Equal(`
    Total copied:                              0
+   Copy errors:                               4
    Present in target but not found in source: 0
 
 `, buf.String())
@@ -135,6 +137,7 @@ func Test_copyTreeSourcesMoreThenTargets_OnlyMathesCopiedFromSources(t *testing.
 	ass.True(os.IsNotExist(err2))
 	ass.Equal(`
    Total copied:                              2
+   Copy errors:                               0
    Present in target but not found in source: 0
 
 `, buf.String())
@@ -168,6 +171,7 @@ func Test_copyTreeTargetsContainMissingSourcesElements_OnlyFoundCopiedFromSource
      %cp1%cf2.txt
 
    Total copied:                              1
+   Copy errors:                               0
    Present in target but not found in source: 1
 
 `, os.PathSeparator, os.PathSeparator), buf.String())
@@ -323,6 +327,7 @@ func Test_copyTreeVerboseTrue_EachCopiedFileOutput(t *testing.T) {
 	ass.Equal(fmt.Sprintf(`[s%cp1%cf1.txt] copied to [t%cp1%cf1.txt]
 
    Total copied:                              1
+   Copy errors:                               0
    Present in target but not found in source: 0
 
 `, os.PathSeparator, os.PathSeparator, os.PathSeparator, os.PathSeparator), buf.String())

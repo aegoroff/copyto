@@ -14,6 +14,7 @@ import (
 type copyResult struct {
 	TotalCopied      int64
 	NotFoundInSource int64
+	CopyErrors       int64
 }
 
 // CopyFileTree does files tree coping
@@ -54,6 +55,7 @@ func copyTree(targetsTree rbtree.RbTree, source string, target string, verbose b
 		if ok {
 			if err := sys.CopyFile(src, tgt, fs); err != nil {
 				log.Printf("%v", err)
+				result.CopyErrors++
 			} else {
 				if verbose {
 					_, _ = fmt.Fprintf(w, "[%s] copied to [%s]\n", src, tgt)
@@ -82,6 +84,7 @@ func printTotals(res copyResult, missing []string, w io.Writer) {
 
 	const totalTemplate = `
    Total copied:                              {{.TotalCopied}}
+   Copy errors:                               {{.CopyErrors}}
    Present in target but not found in source: {{.NotFoundInSource}}
 
 `

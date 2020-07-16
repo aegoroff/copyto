@@ -48,6 +48,7 @@ func Test_CmdNormalCase(t *testing.T) {
 		ass.Equal(sourceContent, string(newTargetContent))
 		ass.Equal(`
    Total copied:                              1
+   Copy errors:                               0
    Present in target but not found in source: 0
 
 `, buf.String())
