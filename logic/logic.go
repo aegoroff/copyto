@@ -54,7 +54,7 @@ func copyTree(targetsTree rbtree.RbTree, source string, target string, verbose b
 		ok, _ := afero.Exists(fs, src)
 		if ok {
 			if err := sys.CopyFile(src, tgt, fs); err != nil {
-				log.Printf("%v", err)
+				log.Printf("Cannot copy '%s' to '%s': %v", src, tgt, err)
 				result.CopyErrors++
 			} else {
 				if verbose {
