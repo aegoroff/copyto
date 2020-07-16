@@ -153,6 +153,7 @@ The app will do sync and shows output like this:
      \f5.xlsx
 
    Total copied:                              3
+   Copy errors:                               0
    Present in target but not found in source: 1
 
  Section: def2
@@ -160,6 +161,7 @@ The app will do sync and shows output like this:
  Target: D:\fTarget2
 
    Total copied:                              0
+   Copy errors:                               0
    Present in target but not found in source: 0
 ```
 
