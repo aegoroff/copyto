@@ -8,10 +8,16 @@ import (
 
 // Printer defines application printing methods
 type Printer interface {
-	Cprint(format string, a ...interface{})
+	// Print prints formatted string that supports colorizing tags
 	Print(format string, a ...interface{})
+
+	// W gets io.Writer
 	W() io.Writer
+
+	// SetColor sets console color
 	SetColor(c color.Color)
+
+	// ResetColor resets console color
 	ResetColor()
 }
 
@@ -36,12 +42,7 @@ func (p *prn) W() io.Writer {
 	return p.w
 }
 
-func (p *prn) Cprint(format string, a ...interface{}) {
-	str := fmt.Sprintf(format, a...)
-	color.Fprintf(p.w, str)
-}
-
 func (p *prn) Print(format string, a ...interface{}) {
 	str := fmt.Sprintf(format, a...)
-	_, _ = fmt.Fprintf(p.w, str)
+	color.Fprintf(p.w, str)
 }

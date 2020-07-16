@@ -52,7 +52,7 @@ func runConfigCmd(path string, fs afero.Fs) error {
 	}
 	for k, v := range config.Definitions {
 		source := findSource(v, config.Sources)
-		appPrinter.Cprint(" <gray>Section:</> %s\n <gray>Source:</> %s\n <gray>Target:</> %s\n", k, source, v.Target)
+		appPrinter.Print(" <gray>Section:</> %s\n <gray>Source:</> %s\n <gray>Target:</> %s\n", k, source, v.Target)
 		flt := logic.NewFilter(v.Include, v.Exclude)
 		logic.CopyFileTree(source, v.Target, flt, fs, appPrinter, Verbose)
 	}

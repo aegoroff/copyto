@@ -57,7 +57,7 @@ func copyTree(targetsTree rbtree.RbTree, source string, target string, verbose b
 				result.CopyErrors++
 			} else {
 				if verbose {
-					p.Cprint("   <gray>%s</> copied to <gray>%s</>\n", src, tgt)
+					p.Print("   <gray>%s</> copied to <gray>%s</>\n", src, tgt)
 				}
 				result.TotalCopied++
 			}
@@ -74,11 +74,11 @@ func copyTree(targetsTree rbtree.RbTree, source string, target string, verbose b
 
 func printTotals(res copyResult, missing []string, p Printer) {
 	if len(missing) > 0 {
-		p.Cprint("\n   <red>Found files that present in target but missing in source:</>\n")
+		p.Print("\n   <red>Found files that present in target but missing in source:</>\n")
 	}
 
 	for _, f := range missing {
-		p.Cprint("     <gray>%s</>\n", f)
+		p.Print("     <gray>%s</>\n", f)
 	}
 
 	const totalTemplate = `

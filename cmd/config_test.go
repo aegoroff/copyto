@@ -23,11 +23,6 @@ func newMockPrn() logic.Printer {
 	return &mockprn{w: bytes.NewBufferString("")}
 }
 
-func (m *mockprn) Cprint(format string, a ...interface{}) {
-	str := fmt.Sprintf(format, a...)
-	_, _ = fmt.Fprintf(m.w, str)
-}
-
 func (m *mockprn) Print(format string, a ...interface{}) {
 	str := fmt.Sprintf(format, a...)
 	_, _ = fmt.Fprintf(m.w, str)
