@@ -54,10 +54,12 @@ func copyTree(targetsTree rbtree.RbTree, source string, target string, verbose b
 		if ok {
 			if err := sys.CopyFile(src, tgt, fs); err != nil {
 				log.Printf("%v", err)
-			} else if verbose {
-				_, _ = fmt.Fprintf(w, "[%s] copied to [%s]\n", src, tgt)
+			} else {
+				if verbose {
+					_, _ = fmt.Fprintf(w, "[%s] copied to [%s]\n", src, tgt)
+				}
+				result.TotalCopied++
 			}
-			result.TotalCopied++
 		} else {
 			result.NotFoundInSource++
 			missing = append(missing, relativePath)

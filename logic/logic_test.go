@@ -53,6 +53,51 @@ func Test_coptyfiletreeAllTargetFilesPresentInSource_AllCopied(t *testing.T) {
 `, buf.String())
 }
 
+func Test_ReadOnlyTargets_NoneCopied(t *testing.T) {
+	// Arrange
+	ass := assert.New(t)
+	memfs := afero.NewMemMapFs()
+
+	memfs.MkdirAll("s/p1", 0755)
+	memfs.MkdirAll("s/p1/p2", 0755)
+	memfs.MkdirAll("t/p1", 0755)
+	memfs.MkdirAll("t/p1/p2", 0755)
+
+	afero.WriteFile(memfs, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
+	afero.WriteFile(memfs, "s/p1/f2.txt", []byte("/s/p1/f2.txt"), 0644)
+	afero.WriteFile(memfs, "s/p1/p2/f1.txt", []byte("/s/p1/p2/f1.txt"), 0644)
+	afero.WriteFile(memfs, "s/p1/p2/f2.txt", []byte("/s/p1/p2/f2.txt"), 0644)
+
+	afero.WriteFile(memfs, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	afero.WriteFile(memfs, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
+	afero.WriteFile(memfs, "t/p1/p2/f1.txt", []byte("/t/p1/p2/f1.txt"), 0644)
+	afero.WriteFile(memfs, "t/p1/p2/f2.txt", []byte("/t/p1/p2/f2.txt"), 0644)
+
+	appFS := afero.NewReadOnlyFs(memfs)
+
+	buf := bytes.NewBufferString("")
+	flt := NewFilter("", "")
+
+	// Act
+	CopyFileTree("s", "t", flt, appFS, buf, false)
+
+	// Assert
+	bytes1, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
+	bytes2, _ := afero.ReadFile(appFS, "t/p1/f2.txt")
+	bytes3, _ := afero.ReadFile(appFS, "t/p1/p2/f1.txt")
+	bytes4, _ := afero.ReadFile(appFS, "t/p1/p2/f2.txt")
+
+	ass.Equal("/t/p1/f1.txt", string(bytes1))
+	ass.Equal("/t/p1/f2.txt", string(bytes2))
+	ass.Equal("/t/p1/p2/f1.txt", string(bytes3))
+	ass.Equal("/t/p1/p2/f2.txt", string(bytes4))
+	ass.Equal(`
+   Total copied:                              0
+   Present in target but not found in source: 0
+
+`, buf.String())
+}
+
 func Test_copyTreeSourcesMoreThenTargets_OnlyMathesCopiedFromSources(t *testing.T) {
 	// Arrange
 	ass := assert.New(t)
