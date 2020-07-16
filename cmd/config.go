@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"copyto/logic"
-	"fmt"
+	"github.com/gookit/color"
 	"github.com/pelletier/go-toml"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
@@ -54,7 +54,7 @@ func runConfigCmd(path string, fs afero.Fs, w io.Writer) error {
 	}
 	for k, v := range config.Definitions {
 		source := findSource(v, config.Sources)
-		_, _ = fmt.Fprintf(w, " Section: %s\n Source: %s\n Target: %s\n", k, source, v.Target)
+		color.Fprintf(w, " <gray>Section:</> %s\n <gray>Source:</> %s\n <gray>Target:</> %s\n", k, source, v.Target)
 		flt := logic.NewFilter(v.Include, v.Exclude)
 		logic.CopyFileTree(source, v.Target, flt, fs, w, Verbose)
 	}

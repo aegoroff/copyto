@@ -167,7 +167,8 @@ func Test_copyTreeTargetsContainMissingSourcesElements_OnlyFoundCopiedFromSource
 	bytes2, _ := afero.ReadFile(appFS, "t/p1/f2.txt")
 	ass.Equal("/s/p1/f1.txt", string(bytes1))
 	ass.Equal("/t/p1/f2.txt", string(bytes2))
-	ass.Equal(fmt.Sprintf(`   Found files that present in target but missing in source:
+	ass.Equal(fmt.Sprintf(`
+   Found files that present in target but missing in source:
      %cp1%cf2.txt
 
    Total copied:                              1
@@ -324,7 +325,7 @@ func Test_copyTreeVerboseTrue_EachCopiedFileOutput(t *testing.T) {
 	CopyFileTree("s", "t", flt, appFS, buf, true)
 
 	// Assert
-	ass.Equal(fmt.Sprintf(`[s%cp1%cf1.txt] copied to [t%cp1%cf1.txt]
+	ass.Equal(fmt.Sprintf(`   s%cp1%cf1.txt copied to t%cp1%cf1.txt
 
    Total copied:                              1
    Copy errors:                               0

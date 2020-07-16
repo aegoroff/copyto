@@ -2,8 +2,8 @@ package logic
 
 import (
 	"copyto/logic/internal/sys"
-	"fmt"
 	"github.com/aegoroff/godatastruct/rbtree"
+	"github.com/gookit/color"
 	"github.com/spf13/afero"
 	"io"
 	"log"
@@ -58,7 +58,7 @@ func copyTree(targetsTree rbtree.RbTree, source string, target string, verbose b
 				result.CopyErrors++
 			} else {
 				if verbose {
-					_, _ = fmt.Fprintf(w, "[%s] copied to [%s]\n", src, tgt)
+					color.Fprintf(w, "   <gray>%s</> copied to <gray>%s</>\n", src, tgt)
 				}
 				result.TotalCopied++
 			}
@@ -75,11 +75,11 @@ func copyTree(targetsTree rbtree.RbTree, source string, target string, verbose b
 
 func printTotals(res copyResult, missing []string, w io.Writer) {
 	if len(missing) > 0 {
-		_, _ = fmt.Fprintf(w, "   Found files that present in target but missing in source:\n")
+		color.Fprintf(w, "\n   <red>Found files that present in target but missing in source:</>\n")
 	}
 
 	for _, f := range missing {
-		_, _ = fmt.Fprintf(w, "     %s\n", f)
+		color.Fprintf(w, "     <gray>%s</>\n", f)
 	}
 
 	const totalTemplate = `
@@ -88,7 +88,8 @@ func printTotals(res copyResult, missing []string, w io.Writer) {
    Present in target but not found in source: {{.NotFoundInSource}}
 
 `
-
+	_, _ = color.Set(color.FgGreen)
 	var report = template.Must(template.New("copyResult").Parse(totalTemplate))
 	_ = report.Execute(w, res)
+	_, _ = color.Reset()
 }
