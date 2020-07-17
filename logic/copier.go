@@ -16,12 +16,14 @@ type copyResult struct {
 	CopyErrors       int64
 }
 
+// Copier defines copy tree structure
 type Copier struct {
 	fs      afero.Fs
 	prn     Printer
 	verbose bool
 }
 
+// NewCopier creates new Copier instance
 func NewCopier(fs afero.Fs, p Printer, verbose bool) *Copier {
 	return &Copier{
 		fs:      fs,
