@@ -30,11 +30,11 @@ type prn struct {
 	w io.Writer
 }
 
-func (p *prn) SetColor(c color.Color) {
+func (*prn) SetColor(c color.Color) {
 	_, _ = color.Set(c)
 }
 
-func (p *prn) ResetColor() {
+func (*prn) ResetColor() {
 	_, _ = color.Reset()
 }
 

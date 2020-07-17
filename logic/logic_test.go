@@ -33,11 +33,9 @@ func (m *mockprn) W() io.Writer {
 	return m.w
 }
 
-func (m *mockprn) SetColor(c color.Color) {
-}
+func (*mockprn) SetColor(c color.Color) {}
 
-func (m *mockprn) ResetColor() {
-}
+func (*mockprn) ResetColor() {}
 
 func Test_coptyfiletreeAllTargetFilesPresentInSource_AllCopied(t *testing.T) {
 	// Arrange

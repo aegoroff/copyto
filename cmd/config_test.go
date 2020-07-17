@@ -32,11 +32,9 @@ func (m *mockprn) W() io.Writer {
 	return m.w
 }
 
-func (m *mockprn) SetColor(c color.Color) {
-}
+func (*mockprn) SetColor(c color.Color) {}
 
-func (m *mockprn) ResetColor() {
-}
+func (*mockprn) ResetColor() {}
 
 func Test_ConfNormalCase(t *testing.T) {
 	var tests = []struct {
