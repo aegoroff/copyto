@@ -50,11 +50,13 @@ func runConfigCmd(path string, fs afero.Fs) error {
 	if err := decodeConfig(path, fs, &config); err != nil {
 		return err
 	}
+
+	c := logic.NewCopier(fs, appPrinter, Verbose)
 	for k, v := range config.Definitions {
 		source := findSource(v, config.Sources)
 		appPrinter.Print(" <gray>Section:</> %s\n <gray>Source:</> %s\n <gray>Target:</> %s\n", k, source, v.Target)
 		flt := logic.NewFilter(v.Include, v.Exclude)
-		c := logic.NewCopier(fs, appPrinter, Verbose)
+
 		c.CopyFileTree(source, v.Target, flt)
 	}
 
