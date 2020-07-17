@@ -23,7 +23,9 @@ var cmdlineCmd = &cobra.Command{
 		excl := cmd.Flag(exclParamName)
 
 		flt := logic.NewFilter(incl.Value.String(), excl.Value.String())
-		logic.CopyFileTree(src.Value.String(), tgt.Value.String(), flt, appFileSystem, appPrinter, Verbose)
+
+		c := logic.NewCopier(appFileSystem, appPrinter, Verbose)
+		c.CopyFileTree(src.Value.String(), tgt.Value.String(), flt)
 	},
 }
 

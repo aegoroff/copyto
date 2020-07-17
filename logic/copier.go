@@ -16,11 +16,25 @@ type copyResult struct {
 	CopyErrors       int64
 }
 
+type Copier struct {
+	fs      afero.Fs
+	prn     Printer
+	verbose bool
+}
+
+func NewCopier(fs afero.Fs, p Printer, verbose bool) *Copier {
+	return &Copier{
+		fs:      fs,
+		prn:     p,
+		verbose: verbose,
+	}
+}
+
 // CopyFileTree does files tree coping
-func CopyFileTree(source, target string, filter Filter, fs afero.Fs, p Printer, verbose bool) {
+func (c *Copier) CopyFileTree(source, target string, filter Filter) {
 	fileTree := rbtree.NewRbTree()
 
-	sys.Scan(target, fs, func(f *sys.ScanEvent) {
+	sys.Scan(target, c.fs, func(f *sys.ScanEvent) {
 		if f.File == nil {
 			return
 		}
@@ -33,11 +47,11 @@ func CopyFileTree(source, target string, filter Filter, fs afero.Fs, p Printer, 
 		fileTree.Insert(n)
 	})
 
-	res, missing := copyTree(fileTree, source, target, verbose, fs, p)
-	printTotals(res, missing, p)
+	res, missing := c.copyTree(fileTree, source, target)
+	c.printTotals(res, missing)
 }
 
-func copyTree(targetsTree rbtree.RbTree, source string, target string, verbose bool, fs afero.Fs, p Printer) (copyResult, []string) {
+func (c *Copier) copyTree(targetsTree rbtree.RbTree, source string, target string) (copyResult, []string) {
 	var result copyResult
 	var missing []string
 
@@ -50,14 +64,14 @@ func copyTree(targetsTree rbtree.RbTree, source string, target string, verbose b
 		src := filepath.Join(source, relativePath)
 		tgt := filepath.Join(target, relativePath)
 
-		ok, _ := afero.Exists(fs, src)
+		ok, _ := afero.Exists(c.fs, src)
 		if ok {
-			if err := sys.CopyFile(src, tgt, fs); err != nil {
+			if err := sys.CopyFile(src, tgt, c.fs); err != nil {
 				log.Printf("Cannot copy '%s' to '%s': %v", src, tgt, err)
 				result.CopyErrors++
 			} else {
-				if verbose {
-					p.Print("   <gray>%s</> copied to <gray>%s</>\n", src, tgt)
+				if c.verbose {
+					c.prn.Print("   <gray>%s</> copied to <gray>%s</>\n", src, tgt)
 				}
 				result.TotalCopied++
 			}
@@ -72,13 +86,13 @@ func copyTree(targetsTree rbtree.RbTree, source string, target string, verbose b
 	return result, missing
 }
 
-func printTotals(res copyResult, missing []string, p Printer) {
+func (c *Copier) printTotals(res copyResult, missing []string) {
 	if len(missing) > 0 {
-		p.Print("\n   <red>Found files that present in target but missing in source:</>\n")
+		c.prn.Print("\n   <red>Found files that present in target but missing in source:</>\n")
 	}
 
 	for _, f := range missing {
-		p.Print("     <gray>%s</>\n", f)
+		c.prn.Print("     <gray>%s</>\n", f)
 	}
 
 	const totalTemplate = `
@@ -87,8 +101,8 @@ func printTotals(res copyResult, missing []string, p Printer) {
    Present in target but not found in source: {{.NotFoundInSource}}
 
 `
-	p.SetColor(color.FgGreen)
+	c.prn.SetColor(color.FgGreen)
 	var report = template.Must(template.New("copyResult").Parse(totalTemplate))
-	_ = report.Execute(p.W(), res)
-	p.ResetColor()
+	_ = report.Execute(c.prn.W(), res)
+	c.prn.ResetColor()
 }

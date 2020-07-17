@@ -54,7 +54,8 @@ func runConfigCmd(path string, fs afero.Fs) error {
 		source := findSource(v, config.Sources)
 		appPrinter.Print(" <gray>Section:</> %s\n <gray>Source:</> %s\n <gray>Target:</> %s\n", k, source, v.Target)
 		flt := logic.NewFilter(v.Include, v.Exclude)
-		logic.CopyFileTree(source, v.Target, flt, fs, appPrinter, Verbose)
+		c := logic.NewCopier(fs, appPrinter, Verbose)
+		c.CopyFileTree(source, v.Target, flt)
 	}
 
 	return nil
