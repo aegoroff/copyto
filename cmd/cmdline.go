@@ -16,7 +16,6 @@ var cmdlineCmd = &cobra.Command{
 	Aliases: []string{"cmd", "l"},
 	Short:   "Use command line to configure required application parameters",
 	Run: func(cmd *cobra.Command, args []string) {
-
 		src := cmd.Flag(srcParamName)
 		tgt := cmd.Flag(tgtParamName)
 		incl := cmd.Flag(inclParamName)
