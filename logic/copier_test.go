@@ -29,9 +29,7 @@ func (m *mockprn) Print(format string, a ...interface{}) {
 	_, _ = fmt.Fprintf(m.w, str)
 }
 
-func (m *mockprn) W() io.Writer {
-	return m.w
-}
+func (m *mockprn) W() io.Writer { return m.w }
 
 func (*mockprn) SetColor(c color.Color) {}
 
