@@ -6,21 +6,6 @@ import (
 	"io"
 )
 
-// Printer defines application printing methods
-type Printer interface {
-	// Print prints formatted string that supports colorizing tags
-	Print(format string, a ...interface{})
-
-	// W gets io.Writer
-	W() io.Writer
-
-	// SetColor sets console color
-	SetColor(c color.Color)
-
-	// ResetColor resets console color
-	ResetColor()
-}
-
 // NewPrinter creates new Printer interface instance
 func NewPrinter(w io.Writer) Printer {
 	return &prn{w: w}

@@ -5,12 +5,6 @@ import (
 	"path/filepath"
 )
 
-// Filter defines file filtering interface
-type Filter interface {
-	// Skip filters file specified if necessary
-	Skip(file string) bool
-}
-
 // NewFilter creates new filter
 func NewFilter(include string, exclude string) Filter {
 	return &filter{
@@ -27,10 +21,6 @@ func (f *filter) Skip(file string) bool {
 type filter struct {
 	incl matcher
 	excl matcher
-}
-
-type matcher interface {
-	match(file string) bool
 }
 
 func newExcluder(pattern string) matcher {
