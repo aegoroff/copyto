@@ -12,8 +12,7 @@ func Test_Root(t *testing.T) {
 	appPrinter = newMockPrn()
 
 	// Act
-	rootCmd.SetArgs([]string{})
-	err := rootCmd.Execute()
+	err := Execute()
 
 	// Assert
 	ass.Nil(err)
@@ -26,8 +25,7 @@ func Test_RootUnknownCommand(t *testing.T) {
 	appPrinter = newMockPrn()
 
 	// Act
-	rootCmd.SetArgs([]string{"xxx"})
-	err := rootCmd.Execute()
+	err := Execute("xxx")
 
 	// Assert
 	ass.Equal("unknown command \"xxx\" for \"copyto\"", err.Error())
@@ -38,8 +36,7 @@ func Test_Execute(t *testing.T) {
 	appPrinter = newMockPrn()
 
 	// Act
-	rootCmd.SetArgs([]string{})
-	Execute()
+	_ = Execute()
 
 	// Assert
 }

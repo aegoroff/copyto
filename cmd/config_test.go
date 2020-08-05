@@ -84,8 +84,7 @@ title = "test"
 		appFileSystem = appFS
 
 		// Act
-		rootCmd.SetArgs([]string{test.cmd, test.pathKey, configPath})
-		rootCmd.Execute()
+		_ = Execute(test.cmd, test.pathKey, configPath)
 
 		// Assert
 		newTargetContent, _ := afero.ReadFile(appFS, targetFilePath)
@@ -124,8 +123,7 @@ title = "test"
 	appFileSystem = appFS
 
 	// Act
-	rootCmd.SetArgs([]string{"conf", "-p", "c/config.toml"})
-	rootCmd.Execute()
+	_ = Execute("conf", "-p", "c/config.toml")
 
 	// Assert
 	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
@@ -156,8 +154,7 @@ title = "test"
 	appFileSystem = appFS
 
 	// Act
-	rootCmd.SetArgs([]string{"conf", "-p", "c/config.toml"})
-	rootCmd.Execute()
+	_ = Execute("conf", "-p", "c/config.toml")
 
 	// Assert
 	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
@@ -179,8 +176,7 @@ func Test_UnexistConfig_NothingCopied(t *testing.T) {
 	appFileSystem = appFS
 
 	// Act
-	rootCmd.SetArgs([]string{"conf", "-p", "c/config.toml"})
-	rootCmd.Execute()
+	_ = Execute("conf", "-p", "c/config.toml")
 
 	// Assert
 	b, _ := afero.ReadFile(appFS, "t/p1/f1.txt")
@@ -229,8 +225,7 @@ title = "test"
 		appFileSystem = appFS
 
 		// Act
-		rootCmd.SetArgs([]string{test.cmd, test.pathKey, configPath})
-		rootCmd.Execute()
+		_ = Execute(test.cmd, test.pathKey, configPath)
 
 		// Assert
 		newTargetContent, _ := afero.ReadFile(appFS, targetFilePath)
@@ -281,8 +276,7 @@ title = "test"
 		appFileSystem = appFS
 
 		// Act
-		rootCmd.SetArgs([]string{test.cmd, test.pathKey, configPath})
-		rootCmd.Execute()
+		_ = Execute(test.cmd, test.pathKey, configPath)
 
 		// Assert
 		newTargetContent, _ := afero.ReadFile(appFS, targetFilePath)

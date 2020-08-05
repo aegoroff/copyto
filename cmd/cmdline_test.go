@@ -39,8 +39,7 @@ func Test_CmdNormalCase(t *testing.T) {
 		appFileSystem = appFS
 
 		// Act
-		rootCmd.SetArgs([]string{test.cmd, test.srcKey, "s", test.tgtKey, "t"})
-		rootCmd.Execute()
+		_ = Execute(test.cmd, test.srcKey, "s", test.tgtKey, "t")
 
 		// Assert
 		newTargetContent, _ := afero.ReadFile(appFS, targetFilePath)
@@ -94,8 +93,7 @@ func Test_CmdFilteringTests(t *testing.T) {
 		appFileSystem = appFS
 
 		// Act
-		rootCmd.SetArgs([]string{"cmd", "-s", "s", "-t", "t", "-i", test.include, "-e", test.exclude})
-		rootCmd.Execute()
+		_ = Execute("cmd", "-s", "s", "-t", "t", "-i", test.include, "-e", test.exclude)
 
 		// Assert
 		newTargetContent, _ := afero.ReadFile(appFS, targetFilePath)

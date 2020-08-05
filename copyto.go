@@ -2,8 +2,12 @@ package main
 
 import (
 	"copyto/cmd"
+	"os"
 )
 
 func main() {
-	cmd.Execute()
+	err := cmd.Execute()
+	if err != nil {
+		os.Exit(1)
+	}
 }

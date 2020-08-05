@@ -27,22 +27,22 @@ type definition struct {
 
 const pathParamName = "path"
 
-// configCmd represents the config command
-var configCmd = &cobra.Command{
-	Use:     "config",
-	Aliases: []string{"conf", "c"},
-	Short:   "Use TOML configuration file to configure required application parameters",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		path := cmd.Flag(pathParamName)
-		return runConfigCmd(path.Value.String(), appFileSystem)
-	},
-}
-
-func init() {
-	rootCmd.AddCommand(configCmd)
+// newConfigCmd represents the config command
+func newConfigCmd() *cobra.Command {
+	var configCmd = &cobra.Command{
+		Use:     "config",
+		Aliases: []string{"conf", "c"},
+		Short:   "Use TOML configuration file to configure required application parameters",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			path := cmd.Flag(pathParamName)
+			return runConfigCmd(path.Value.String(), appFileSystem)
+		},
+	}
 
 	configCmd.Flags().StringP(pathParamName, "p", "", "Path to configuration file (required)")
 	_ = configCmd.MarkFlagRequired(pathParamName)
+
+	return configCmd
 }
 
 func runConfigCmd(path string, fs afero.Fs) error {

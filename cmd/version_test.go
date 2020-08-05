@@ -22,8 +22,7 @@ func Test_Version(t *testing.T) {
 		mock := appPrinter.(*mockprn)
 
 		// Act
-		rootCmd.SetArgs([]string{test.cmd})
-		rootCmd.Execute()
+		_ = Execute(test.cmd)
 
 		// Assert
 		ass.Equal(fmt.Sprintf("copyto v%s\n", Version), mock.String())
