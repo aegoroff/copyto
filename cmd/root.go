@@ -13,7 +13,7 @@ var Verbose bool
 var appFileSystem afero.Fs
 var appPrinter logic.Printer
 
-// rootCmd represents the root command
+// newRoot represents the root command
 func newRoot() *cobra.Command {
 	return &cobra.Command{
 		Use:   "copyto",
