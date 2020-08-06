@@ -63,12 +63,12 @@ func runConfigCmd(path string, fs afero.Fs) error {
 	return nil
 }
 
-func decodeConfig(fpath string, fs afero.Fs, v interface{}) error {
-	bs, err := afero.ReadFile(fs, fpath)
+func decodeConfig(path string, fs afero.Fs, to interface{}) error {
+	bytes, err := afero.ReadFile(fs, path)
 	if err != nil {
 		return err
 	}
-	return toml.Unmarshal(bs, v)
+	return toml.Unmarshal(bytes, to)
 }
 
 func findSource(def definition, sources map[string]source) string {
