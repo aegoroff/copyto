@@ -2,7 +2,7 @@ package logic
 
 import (
 	"copyto/logic/internal/sys"
-	"github.com/aegoroff/godatastruct/rbtree"
+	"github.com/google/btree"
 	"github.com/gookit/color"
 	"github.com/spf13/afero"
 	"log"
@@ -34,7 +34,7 @@ func NewCopier(fs afero.Fs, p Printer, verbose bool) *Copier {
 
 // CopyFileTree does files tree coping
 func (c *Copier) CopyFileTree(source, target string, filter Filter) {
-	fileTree := rbtree.NewRbTree()
+	fileTree := btree.New(16)
 
 	sys.Scan(target, c.fs, func(f *sys.ScanEvent) {
 		if f.File == nil {
@@ -46,14 +46,14 @@ func (c *Copier) CopyFileTree(source, target string, filter Filter) {
 		}
 
 		n := newFile(target, f.File.Path)
-		fileTree.Insert(n)
+		fileTree.ReplaceOrInsert(n)
 	})
 
 	res, missing := c.copyTree(fileTree, source, target)
 	c.printTotals(res, missing)
 }
 
-func (c *Copier) copyTree(targetsTree rbtree.RbTree, source string, target string) (copyResult, []string) {
+func (c *Copier) copyTree(targetsTree *btree.BTree, source string, target string) (copyResult, []string) {
 	var result copyResult
 	var missing []string
 
@@ -61,8 +61,8 @@ func (c *Copier) copyTree(targetsTree rbtree.RbTree, source string, target strin
 		return result, missing
 	}
 
-	targetsTree.Ascend(func(n rbtree.Node) bool {
-		relativePath := n.Key().String()
+	targetsTree.Ascend(func(n btree.Item) bool {
+		relativePath := n.(*file).String()
 		src := filepath.Join(source, relativePath)
 		tgt := filepath.Join(target, relativePath)
 
