@@ -1,5 +1,5 @@
 ﻿# version format
-version: 1.0.{build}
+version: 1.1.{build}
 
 clone_folder: c:\gopath\src\copyto
 
@@ -24,7 +24,7 @@ install:
   - go env
   - go get "github.com/mitchellh/gox"
 
-stack: go ^1.14
+stack: go ^1.15
 
 image: Visual Studio 2019
 
