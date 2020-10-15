@@ -59,7 +59,7 @@ brews:
       name: "Alexander Egorov"
       email: "egoroff@gmail.com"
     homepage: "https://github.com/aegoroff/copyto"
-    description: "A small tool that shows selected folder or drive (on Windows) usage statistic"
+    description: "A small command line app written in Go that allows you to easily one way sync between folders"
 
 signs:
   - artifacts: checksum
