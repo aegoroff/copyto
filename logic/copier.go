@@ -34,6 +34,12 @@ func NewCopier(fs afero.Fs, p Printer, verbose bool) *Copier {
 
 // CopyFileTree does files tree coping
 func (c *Copier) CopyFileTree(source, target string, filter Filter) {
+	fileTree := c.createTree(target, filter)
+	res, missing := c.copyTree(fileTree, source, target)
+	c.printTotals(res, missing)
+}
+
+func (c *Copier) createTree(target string, filter Filter) *btree.BTree {
 	fileTree := btree.New(16)
 
 	sys.Scan(target, c.fs, func(f *sys.ScanEvent) {
@@ -48,9 +54,7 @@ func (c *Copier) CopyFileTree(source, target string, filter Filter) {
 		n := newFile(target, f.File.Path)
 		fileTree.ReplaceOrInsert(n)
 	})
-
-	res, missing := c.copyTree(fileTree, source, target)
-	c.printTotals(res, missing)
+	return fileTree
 }
 
 func (c *Copier) copyTree(targetsTree *btree.BTree, source string, target string) (copyResult, []string) {
