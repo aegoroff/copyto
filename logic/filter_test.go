@@ -2,13 +2,21 @@ package logic
 
 import (
 	"github.com/stretchr/testify/assert"
+	"os"
 	"testing"
 )
 
 func Test_FilterPatternError_ResultAsExpected(t *testing.T) {
 	// Arrange
-	path := "\\test"
-	patt := "\\"
+	var patt string
+	var path string
+	if os.PathSeparator == '/' {
+		patt = "\\"
+		path = "\\test"
+	} else {
+		patt = "/"
+		path = "/test"
+	}
 
 	var tests = []struct {
 		name string
