@@ -31,7 +31,7 @@ func (m *mockprn) Print(format string, a ...interface{}) {
 
 func (m *mockprn) W() io.Writer { return m.w }
 
-func (*mockprn) SetColor(c color.Color) {}
+func (*mockprn) SetColor(color.Color) {}
 
 func (*mockprn) ResetColor() {}
 
@@ -40,20 +40,20 @@ func Test_coptyfiletreeAllTargetFilesPresentInSource_AllCopied(t *testing.T) {
 	ass := assert.New(t)
 	appFS := afero.NewMemMapFs()
 
-	appFS.MkdirAll("s/p1", 0755)
-	appFS.MkdirAll("s/p1/p2", 0755)
-	appFS.MkdirAll("t/p1", 0755)
-	appFS.MkdirAll("t/p1/p2", 0755)
+	_ = appFS.MkdirAll("s/p1", 0755)
+	_ = appFS.MkdirAll("s/p1/p2", 0755)
+	_ = appFS.MkdirAll("t/p1", 0755)
+	_ = appFS.MkdirAll("t/p1/p2", 0755)
 
-	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, "s/p1/f2.txt", []byte("/s/p1/f2.txt"), 0644)
-	afero.WriteFile(appFS, "s/p1/p2/f1.txt", []byte("/s/p1/p2/f1.txt"), 0644)
-	afero.WriteFile(appFS, "s/p1/p2/f2.txt", []byte("/s/p1/p2/f2.txt"), 0644)
+	_ = afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "s/p1/f2.txt", []byte("/s/p1/f2.txt"), 0644)
+	_ = afero.WriteFile(appFS, "s/p1/p2/f1.txt", []byte("/s/p1/p2/f1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "s/p1/p2/f2.txt", []byte("/s/p1/p2/f2.txt"), 0644)
 
-	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
-	afero.WriteFile(appFS, "t/p1/p2/f1.txt", []byte("/t/p1/p2/f1.txt"), 0644)
-	afero.WriteFile(appFS, "t/p1/p2/f2.txt", []byte("/t/p1/p2/f2.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/p2/f1.txt", []byte("/t/p1/p2/f1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/p2/f2.txt", []byte("/t/p1/p2/f2.txt"), 0644)
 
 	buf := newMockPrn()
 	flt := NewFilter("", "")
@@ -85,20 +85,20 @@ func Test_ReadOnlyTargets_NoneCopied(t *testing.T) {
 	ass := assert.New(t)
 	memfs := afero.NewMemMapFs()
 
-	memfs.MkdirAll("s/p1", 0755)
-	memfs.MkdirAll("s/p1/p2", 0755)
-	memfs.MkdirAll("t/p1", 0755)
-	memfs.MkdirAll("t/p1/p2", 0755)
+	_ = memfs.MkdirAll("s/p1", 0755)
+	_ = memfs.MkdirAll("s/p1/p2", 0755)
+	_ = memfs.MkdirAll("t/p1", 0755)
+	_ = memfs.MkdirAll("t/p1/p2", 0755)
 
-	afero.WriteFile(memfs, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
-	afero.WriteFile(memfs, "s/p1/f2.txt", []byte("/s/p1/f2.txt"), 0644)
-	afero.WriteFile(memfs, "s/p1/p2/f1.txt", []byte("/s/p1/p2/f1.txt"), 0644)
-	afero.WriteFile(memfs, "s/p1/p2/f2.txt", []byte("/s/p1/p2/f2.txt"), 0644)
+	_ = afero.WriteFile(memfs, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
+	_ = afero.WriteFile(memfs, "s/p1/f2.txt", []byte("/s/p1/f2.txt"), 0644)
+	_ = afero.WriteFile(memfs, "s/p1/p2/f1.txt", []byte("/s/p1/p2/f1.txt"), 0644)
+	_ = afero.WriteFile(memfs, "s/p1/p2/f2.txt", []byte("/s/p1/p2/f2.txt"), 0644)
 
-	afero.WriteFile(memfs, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
-	afero.WriteFile(memfs, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
-	afero.WriteFile(memfs, "t/p1/p2/f1.txt", []byte("/t/p1/p2/f1.txt"), 0644)
-	afero.WriteFile(memfs, "t/p1/p2/f2.txt", []byte("/t/p1/p2/f2.txt"), 0644)
+	_ = afero.WriteFile(memfs, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	_ = afero.WriteFile(memfs, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
+	_ = afero.WriteFile(memfs, "t/p1/p2/f1.txt", []byte("/t/p1/p2/f1.txt"), 0644)
+	_ = afero.WriteFile(memfs, "t/p1/p2/f2.txt", []byte("/t/p1/p2/f2.txt"), 0644)
 
 	appFS := afero.NewReadOnlyFs(memfs)
 
@@ -133,17 +133,17 @@ func Test_copyTreeSourcesMoreThenTargets_OnlyMathesCopiedFromSources(t *testing.
 
 	appFS := afero.NewMemMapFs()
 
-	appFS.MkdirAll("s/p1", 0755)
-	appFS.MkdirAll("s/p1/p2", 0755)
-	appFS.MkdirAll("t/p1", 0755)
+	_ = appFS.MkdirAll("s/p1", 0755)
+	_ = appFS.MkdirAll("s/p1/p2", 0755)
+	_ = appFS.MkdirAll("t/p1", 0755)
 
-	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, "s/p1/f2.txt", []byte("/s/p1/f2.txt"), 0644)
-	afero.WriteFile(appFS, "s/p1/p2/f1.txt", []byte("/s/p1/p2/f1.txt"), 0644)
-	afero.WriteFile(appFS, "s/p1/p2/f2.txt", []byte("/s/p1/p2/f2.txt"), 0644)
+	_ = afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "s/p1/f2.txt", []byte("/s/p1/f2.txt"), 0644)
+	_ = afero.WriteFile(appFS, "s/p1/p2/f1.txt", []byte("/s/p1/p2/f1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "s/p1/p2/f2.txt", []byte("/s/p1/p2/f2.txt"), 0644)
 
-	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
 	buf := newMockPrn()
 
@@ -176,13 +176,13 @@ func Test_copyTreeTargetsContainMissingSourcesElements_OnlyFoundCopiedFromSource
 	ass := assert.New(t)
 	appFS := afero.NewMemMapFs()
 
-	appFS.MkdirAll("s/p1", 0755)
-	appFS.MkdirAll("t/p1", 0755)
+	_ = appFS.MkdirAll("s/p1", 0755)
+	_ = appFS.MkdirAll("t/p1", 0755)
 
-	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
 
-	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
 	buf := newMockPrn()
 	flt := NewFilter("", "")
@@ -213,15 +213,15 @@ func Test_copyTreeSourcesContainsSameNameFilesButInSubfolders_OnlyExactMatchedCo
 
 	appFS := afero.NewMemMapFs()
 
-	appFS.MkdirAll("s/p1", 0755)
-	appFS.MkdirAll("s/p1/p2", 0755)
-	appFS.MkdirAll("t/p1", 0755)
+	_ = appFS.MkdirAll("s/p1", 0755)
+	_ = appFS.MkdirAll("s/p1/p2", 0755)
+	_ = appFS.MkdirAll("t/p1", 0755)
 
-	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, "s/p1/p2/f2.txt", []byte("/s/p1/p2/f2.txt"), 0644)
+	_ = afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "s/p1/p2/f2.txt", []byte("/s/p1/p2/f2.txt"), 0644)
 
-	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
 	buf := newMockPrn()
 	flt := NewFilter("", "")
@@ -243,13 +243,13 @@ func Test_copyTreeSourcesContainsNoMatchingFiles_NothingCopied(t *testing.T) {
 
 	appFS := afero.NewMemMapFs()
 
-	appFS.MkdirAll("s/p1", 0755)
-	appFS.MkdirAll("t/p1", 0755)
+	_ = appFS.MkdirAll("s/p1", 0755)
+	_ = appFS.MkdirAll("t/p1", 0755)
 
-	afero.WriteFile(appFS, "s/p1/f3.txt", []byte("/s/p1/f3.txt"), 0644)
+	_ = afero.WriteFile(appFS, "s/p1/f3.txt", []byte("/s/p1/f3.txt"), 0644)
 
-	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
 	buf := newMockPrn()
 	flt := NewFilter("", "")
@@ -271,11 +271,11 @@ func Test_copyTreeEmptySources_NothingCopied(t *testing.T) {
 
 	appFS := afero.NewMemMapFs()
 
-	appFS.MkdirAll("s/p1", 0755)
-	appFS.MkdirAll("t/p1", 0755)
+	_ = appFS.MkdirAll("s/p1", 0755)
+	_ = appFS.MkdirAll("t/p1", 0755)
 
-	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/f2.txt", []byte("/t/p1/f2.txt"), 0644)
 
 	buf := newMockPrn()
 	flt := NewFilter("", "")
@@ -297,10 +297,10 @@ func Test_copyTreeEmptyTargets_NothingCopied(t *testing.T) {
 
 	appFS := afero.NewMemMapFs()
 
-	appFS.MkdirAll("s/p1", 0755)
-	appFS.MkdirAll("t/p1", 0755)
+	_ = appFS.MkdirAll("s/p1", 0755)
+	_ = appFS.MkdirAll("t/p1", 0755)
 
-	afero.WriteFile(appFS, "s/p1/f3.txt", []byte("/s/p1/f3.txt"), 0644)
+	_ = afero.WriteFile(appFS, "s/p1/f3.txt", []byte("/s/p1/f3.txt"), 0644)
 
 	buf := newMockPrn()
 	flt := NewFilter("", "")
@@ -320,13 +320,13 @@ func Test_copyTreeDifferentCase_FilesNotCopied(t *testing.T) {
 
 	appFS := afero.NewMemMapFs()
 
-	appFS.MkdirAll("s/p1", 0755)
-	appFS.MkdirAll("t/p1", 0755)
+	_ = appFS.MkdirAll("s/p1", 0755)
+	_ = appFS.MkdirAll("t/p1", 0755)
 
 	srcContent := "/s/p1/f1.txt"
 	tgtContent := "/t/p1/F1.txt"
-	afero.WriteFile(appFS, "s/p1/f1.txt", []byte(srcContent), 0644)
-	afero.WriteFile(appFS, "t/p1/F1.txt", []byte(tgtContent), 0644)
+	_ = afero.WriteFile(appFS, "s/p1/f1.txt", []byte(srcContent), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/F1.txt", []byte(tgtContent), 0644)
 
 	buf := newMockPrn()
 	flt := NewFilter("", "")
@@ -346,11 +346,11 @@ func Test_copyTreeVerboseTrue_EachCopiedFileOutput(t *testing.T) {
 
 	appFS := afero.NewMemMapFs()
 
-	appFS.MkdirAll("s/p1", 0755)
-	appFS.MkdirAll("t/p1", 0755)
+	_ = appFS.MkdirAll("s/p1", 0755)
+	_ = appFS.MkdirAll("t/p1", 0755)
 
-	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/F1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/F1.txt"), 0644)
 
 	buf := newMockPrn()
 	flt := NewFilter("", "")
@@ -375,11 +375,11 @@ func Test_copyTreeUnexistTarget_NoFilesCopied(t *testing.T) {
 
 	appFS := afero.NewMemMapFs()
 
-	appFS.MkdirAll("s/p1", 0755)
-	appFS.MkdirAll("t/p1", 0755)
+	_ = appFS.MkdirAll("s/p1", 0755)
+	_ = appFS.MkdirAll("t/p1", 0755)
 
-	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
-	afero.WriteFile(appFS, "t/p1/F1.txt", []byte("/t/p1/F1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/F1.txt", []byte("/t/p1/F1.txt"), 0644)
 
 	buf := newMockPrn()
 	flt := NewFilter("", "")
@@ -399,9 +399,9 @@ func Test_copyFileUnexistSource_ErrReturned(t *testing.T) {
 
 	appFS := afero.NewMemMapFs()
 
-	appFS.MkdirAll("t/p1", 0755)
+	_ = appFS.MkdirAll("t/p1", 0755)
 
-	afero.WriteFile(appFS, "t/p1/F1.txt", []byte("/t/p1/F1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/F1.txt", []byte("/t/p1/F1.txt"), 0644)
 
 	// Act
 	err := sys.CopyFile("s/p1/F1.txt", "t/p1/F1.txt", appFS)
@@ -418,9 +418,9 @@ func Test_copyFileSourceIsDir_ErrReturned(t *testing.T) {
 
 	appFS := afero.NewMemMapFs()
 
-	appFS.MkdirAll("t/p1", 0755)
+	_ = appFS.MkdirAll("t/p1", 0755)
 
-	afero.WriteFile(appFS, "t/p1/F1.txt", []byte("/t/p1/F1.txt"), 0644)
+	_ = afero.WriteFile(appFS, "t/p1/F1.txt", []byte("/t/p1/F1.txt"), 0644)
 
 	// Act
 	err := sys.CopyFile("t/p1", "t/p1/F1.txt", appFS)
