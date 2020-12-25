@@ -2,7 +2,7 @@ package logic
 
 import (
 	"copyto/logic/internal/sys"
-	"github.com/google/btree"
+	"github.com/aegoroff/godatastruct/rbtree"
 	"github.com/gookit/color"
 	"github.com/spf13/afero"
 	"log"
@@ -39,8 +39,8 @@ func (c *Copier) CopyFileTree(source, target string, filter Filter) {
 	c.printTotals(res, missing)
 }
 
-func (c *Copier) createTree(target string, filter Filter) *btree.BTree {
-	fileTree := btree.New(16)
+func (c *Copier) createTree(target string, filter Filter) rbtree.RbTree {
+	fileTree := rbtree.NewRbTree()
 
 	sys.Scan(target, c.fs, func(f *sys.ScanEvent) {
 		if f.File == nil {
@@ -52,12 +52,12 @@ func (c *Copier) createTree(target string, filter Filter) *btree.BTree {
 		}
 
 		n := newFile(target, f.File.Path)
-		fileTree.ReplaceOrInsert(n)
+		fileTree.Insert(n)
 	})
 	return fileTree
 }
 
-func (c *Copier) copyTree(targetsTree *btree.BTree, source string, target string) (copyResult, []string) {
+func (c *Copier) copyTree(targetsTree rbtree.RbTree, source string, target string) (copyResult, []string) {
 	var result copyResult
 	var missing []string
 
@@ -65,7 +65,9 @@ func (c *Copier) copyTree(targetsTree *btree.BTree, source string, target string
 		return result, missing
 	}
 
-	targetsTree.Ascend(func(n btree.Item) bool {
+	it := rbtree.NewWalkInorder(targetsTree)
+
+	it.Foreach(func(n rbtree.Comparable) {
 		relativePath := n.(*file).String()
 		src := filepath.Join(source, relativePath)
 		tgt := filepath.Join(target, relativePath)
@@ -85,8 +87,6 @@ func (c *Copier) copyTree(targetsTree *btree.BTree, source string, target string
 			result.NotFoundInSource++
 			missing = append(missing, relativePath)
 		}
-
-		return true
 	})
 
 	return result, missing
