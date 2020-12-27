@@ -2,8 +2,8 @@ package logic
 
 import (
 	"bytes"
-	"copyto/logic/internal/sys"
 	"fmt"
+	"github.com/aegoroff/copyto/logic/internal/sys"
 	"github.com/gookit/color"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"

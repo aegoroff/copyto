@@ -1,7 +1,7 @@
 package logic
 
 import (
-	"copyto/logic/internal/sys"
+	"github.com/aegoroff/copyto/logic/internal/sys"
 	"github.com/aegoroff/godatastruct/rbtree"
 	"path/filepath"
 )
