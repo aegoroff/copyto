@@ -1,7 +1,7 @@
 package logic
 
 import (
-	"copyto/logic/internal/sys"
+	"github.com/aegoroff/dirstat/scan"
 	"github.com/aegoroff/godatastruct/rbtree"
 	"path/filepath"
 )
@@ -21,7 +21,7 @@ func newTreeCreator(target string, filter Filter) *treeCreator {
 	return &tc
 }
 
-func (t *treeCreator) Handle(evt *sys.ScanEvent) {
+func (t *treeCreator) Handle(evt *scan.ScanEvent) {
 	if evt.File == nil {
 		return
 	}

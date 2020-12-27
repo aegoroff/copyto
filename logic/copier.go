@@ -2,6 +2,7 @@ package logic
 
 import (
 	"copyto/logic/internal/sys"
+	"github.com/aegoroff/dirstat/scan"
 	"github.com/aegoroff/godatastruct/rbtree"
 	"github.com/gookit/color"
 	"github.com/spf13/afero"
@@ -41,7 +42,7 @@ func (c *Copier) CopyFileTree(source, target string, filter Filter) {
 
 func (c *Copier) createTree(target string, filter Filter) rbtree.RbTree {
 	h := newTreeCreator(target, filter)
-	sys.Scan(target, c.fs, h)
+	scan.Scan(target, c.fs, h)
 	return h.tree
 }
 
