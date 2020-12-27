@@ -24,7 +24,7 @@ Add my tap (do it once):
 ```sh
 brew tap aegoroff/tap
 ```
-And the install copyto:
+And then install copyto:
 ```sh
 brew install copyto
 ```
