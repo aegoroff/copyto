@@ -1,7 +1,7 @@
 package logic
 
 import (
-	"github.com/aegoroff/copyto/logic/internal/sys"
+	"copyto/logic/internal/sys"
 	"github.com/aegoroff/godatastruct/rbtree"
 	"github.com/gookit/color"
 	"github.com/spf13/afero"

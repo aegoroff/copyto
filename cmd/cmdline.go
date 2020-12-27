@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/aegoroff/copyto/logic"
+	"copyto/logic"
 	"github.com/spf13/cobra"
 )
 

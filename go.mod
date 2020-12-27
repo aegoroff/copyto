@@ -1,4 +1,4 @@
-module github.com/aegoroff/copyto
+module copyto
 
 go 1.14
 

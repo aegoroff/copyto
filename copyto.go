@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/aegoroff/copyto/cmd"
+	"copyto/cmd"
 	"os"
 )
 

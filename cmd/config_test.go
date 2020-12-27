@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"bytes"
+	"copyto/logic"
 	"fmt"
-	"github.com/aegoroff/copyto/logic"
 	"github.com/gookit/color"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
@@ -30,7 +30,7 @@ func (m *mockprn) Print(format string, a ...interface{}) {
 
 func (m *mockprn) W() io.Writer { return m.w }
 
-func (*mockprn) SetColor(color.Color) {}
+func (*mockprn) SetColor(c color.Color) {}
 
 func (*mockprn) ResetColor() {}
 
@@ -67,18 +67,18 @@ title = "test"
   source = 's1'
   target = 't1'`
 
-		_ = appFS.MkdirAll("s/p1", 0755)
-		_ = appFS.MkdirAll("t/p1", 0755)
-		_ = appFS.MkdirAll("c", 0755)
+		appFS.MkdirAll("s/p1", 0755)
+		appFS.MkdirAll("t/p1", 0755)
+		appFS.MkdirAll("c", 0755)
 		const sourceContent = "src"
 		const sourceFilePath = "s/p1/f1.txt"
 		const targetContent = "tgt"
 		const targetFilePath = "t/p1/f1.txt"
 		const configPath = "c/config.toml"
 
-		_ = afero.WriteFile(appFS, sourceFilePath, []byte(sourceContent), 0644)
-		_ = afero.WriteFile(appFS, targetFilePath, []byte(targetContent), 0644)
-		_ = afero.WriteFile(appFS, configPath, []byte(config), 0644)
+		afero.WriteFile(appFS, sourceFilePath, []byte(sourceContent), 0644)
+		afero.WriteFile(appFS, targetFilePath, []byte(targetContent), 0644)
+		afero.WriteFile(appFS, configPath, []byte(config), 0644)
 
 		appPrinter = newMockPrn()
 		appFileSystem = appFS
@@ -111,13 +111,13 @@ title = "test"
   sourcelink = "source2"
   target = 't'`
 
-	_ = appFS.MkdirAll("s/p1", 0755)
-	_ = appFS.MkdirAll("t/p1", 0755)
-	_ = appFS.MkdirAll("c", 0755)
+	appFS.MkdirAll("s/p1", 0755)
+	appFS.MkdirAll("t/p1", 0755)
+	appFS.MkdirAll("c", 0755)
 
-	_ = afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
-	_ = afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
-	_ = afero.WriteFile(appFS, "c/config.toml", []byte(config), 0644)
+	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "c/config.toml", []byte(config), 0644)
 
 	appPrinter = newMockPrn()
 	appFileSystem = appFS
@@ -142,13 +142,13 @@ title = "test"
 [sources]
  [sources.source1`
 
-	_ = appFS.MkdirAll("s/p1", 0755)
-	_ = appFS.MkdirAll("t/p1", 0755)
-	_ = appFS.MkdirAll("c", 0755)
+	appFS.MkdirAll("s/p1", 0755)
+	appFS.MkdirAll("t/p1", 0755)
+	appFS.MkdirAll("c", 0755)
 
-	_ = afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
-	_ = afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
-	_ = afero.WriteFile(appFS, "c/config.toml", []byte(config), 0644)
+	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "c/config.toml", []byte(config), 0644)
 
 	appPrinter = newMockPrn()
 	appFileSystem = appFS
@@ -166,11 +166,11 @@ func Test_UnexistConfig_NothingCopied(t *testing.T) {
 	ass := assert.New(t)
 	appFS := afero.NewMemMapFs()
 
-	_ = appFS.MkdirAll("s/p1", 0755)
-	_ = appFS.MkdirAll("t/p1", 0755)
+	appFS.MkdirAll("s/p1", 0755)
+	appFS.MkdirAll("t/p1", 0755)
 
-	_ = afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
-	_ = afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "s/p1/f1.txt", []byte("/s/p1/f1.txt"), 0644)
+	afero.WriteFile(appFS, "t/p1/f1.txt", []byte("/t/p1/f1.txt"), 0644)
 
 	appPrinter = newMockPrn()
 	appFileSystem = appFS
@@ -208,18 +208,18 @@ title = "test"
   target = 't'
   include = 'f2.*'`
 
-		_ = appFS.MkdirAll("s/p1", 0755)
-		_ = appFS.MkdirAll("t/p1", 0755)
-		_ = appFS.MkdirAll("c", 0755)
+		appFS.MkdirAll("s/p1", 0755)
+		appFS.MkdirAll("t/p1", 0755)
+		appFS.MkdirAll("c", 0755)
 		const sourceContent = "src"
 		const sourceFilePath = "s/p1/f1.txt"
 		const targetContent = "tgt"
 		const targetFilePath = "t/p1/f1.txt"
 		const configPath = "c/config.toml"
 
-		_ = afero.WriteFile(appFS, sourceFilePath, []byte(sourceContent), 0644)
-		_ = afero.WriteFile(appFS, targetFilePath, []byte(targetContent), 0644)
-		_ = afero.WriteFile(appFS, configPath, []byte(config), 0644)
+		afero.WriteFile(appFS, sourceFilePath, []byte(sourceContent), 0644)
+		afero.WriteFile(appFS, targetFilePath, []byte(targetContent), 0644)
+		afero.WriteFile(appFS, configPath, []byte(config), 0644)
 
 		appPrinter = newMockPrn()
 		appFileSystem = appFS
@@ -259,18 +259,18 @@ title = "test"
   target = 't'
   exclude = 'f1.*'`
 
-		_ = appFS.MkdirAll("s/p1", 0755)
-		_ = appFS.MkdirAll("t/p1", 0755)
-		_ = appFS.MkdirAll("c", 0755)
+		appFS.MkdirAll("s/p1", 0755)
+		appFS.MkdirAll("t/p1", 0755)
+		appFS.MkdirAll("c", 0755)
 		const sourceContent = "src"
 		const sourceFilePath = "s/p1/f1.txt"
 		const targetContent = "tgt"
 		const targetFilePath = "t/p1/f1.txt"
 		const configPath = "c/config.toml"
 
-		_ = afero.WriteFile(appFS, sourceFilePath, []byte(sourceContent), 0644)
-		_ = afero.WriteFile(appFS, targetFilePath, []byte(targetContent), 0644)
-		_ = afero.WriteFile(appFS, configPath, []byte(config), 0644)
+		afero.WriteFile(appFS, sourceFilePath, []byte(sourceContent), 0644)
+		afero.WriteFile(appFS, targetFilePath, []byte(targetContent), 0644)
+		afero.WriteFile(appFS, configPath, []byte(config), 0644)
 
 		appPrinter = newMockPrn()
 		appFileSystem = appFS
