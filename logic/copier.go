@@ -40,21 +40,9 @@ func (c *Copier) CopyFileTree(source, target string, filter Filter) {
 }
 
 func (c *Copier) createTree(target string, filter Filter) rbtree.RbTree {
-	fileTree := rbtree.NewRbTree()
-
-	sys.Scan(target, c.fs, func(f *sys.ScanEvent) {
-		if f.File == nil {
-			return
-		}
-
-		if filter.Skip(filepath.Base(f.File.Path)) {
-			return
-		}
-
-		n := newFile(target, f.File.Path)
-		fileTree.Insert(n)
-	})
-	return fileTree
+	h := newTreeCreator(target, filter)
+	sys.Scan(target, c.fs, h)
+	return h.tree
 }
 
 func (c *Copier) copyTree(targetsTree rbtree.RbTree, source string, target string) (copyResult, []string) {
