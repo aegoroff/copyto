@@ -49,10 +49,6 @@ func (c *Copier) copyTree(targetsTree rbtree.RbTree, source string, target strin
 	var result copyResult
 	var missing []string
 
-	if targetsTree.Len() == 0 {
-		return result, missing
-	}
-
 	it := rbtree.NewWalkInorder(targetsTree)
 
 	it.Foreach(func(n rbtree.Comparable) {
@@ -62,15 +58,7 @@ func (c *Copier) copyTree(targetsTree rbtree.RbTree, source string, target strin
 
 		ok, _ := afero.Exists(c.fs, src)
 		if ok {
-			if err := sys.CopyFile(src, tgt, c.fs); err != nil {
-				log.Printf("Cannot copy '%s' to '%s': %v", src, tgt, err)
-				result.CopyErrors++
-			} else {
-				if c.verbose {
-					c.prn.Print("   <gray>%s</> copied to <gray>%s</>\n", src, tgt)
-				}
-				result.TotalCopied++
-			}
+			c.copyFile(src, tgt, &result)
 		} else {
 			result.NotFoundInSource++
 			missing = append(missing, relativePath)
@@ -78,6 +66,18 @@ func (c *Copier) copyTree(targetsTree rbtree.RbTree, source string, target strin
 	})
 
 	return result, missing
+}
+
+func (c *Copier) copyFile(src string, tgt string, result *copyResult) {
+	if err := sys.CopyFile(src, tgt, c.fs); err != nil {
+		log.Printf("Cannot copy '%s' to '%s': %v", src, tgt, err)
+		result.CopyErrors++
+	} else {
+		if c.verbose {
+			c.prn.Print("   <gray>%s</> copied to <gray>%s</>\n", src, tgt)
+		}
+		result.TotalCopied++
+	}
 }
 
 func (c *Copier) printTotals(res copyResult, missing []string) {
