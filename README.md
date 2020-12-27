@@ -16,6 +16,28 @@ Also you can setup file names filter using include or exclude options (or both) 
 file or command line. Include filter allows only file matched to be copied. Exclude filter allows all files but 
 those that matched to be copied.
 
+## Install the pre-compiled binary
+
+**homebrew** (only on macOS and Linux for now):
+
+Add my tap (do it once):
+```sh
+brew tap aegoroff/tap
+```
+And the install copyto:
+```sh
+brew install copyto
+```
+Update copyto if already installed:
+```sh
+brew upgrade copyto
+```
+
+**manually**:
+
+Download the pre-compiled binaries from the [releases](https://github.com/aegoroff/copyto/releases) and
+copy to the desired location.
+
 Command line syntax:
 --------------------
 ```
