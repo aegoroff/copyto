@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -25,6 +24,6 @@ func Test_Version(t *testing.T) {
 		_ = Execute(test.cmd)
 
 		// Assert
-		ass.Equal(fmt.Sprintf("copyto v%s\n", Version), mock.String())
+		ass.Contains(mock.String(), Version)
 	}
 }

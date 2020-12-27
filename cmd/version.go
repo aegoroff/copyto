@@ -15,7 +15,7 @@ func newVersionCmd() *cobra.Command {
 		Short:   "Print the version number of copyto",
 		Long:    `All software has versions. This is copyto's`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			appPrinter.Print("copyto v%s\n", Version)
+			appPrinter.Print("%s\n", Version)
 			return nil
 		},
 	}
