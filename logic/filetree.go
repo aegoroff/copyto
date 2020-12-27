@@ -5,11 +5,11 @@ import (
 )
 
 type file struct {
-	name string
+	relative string
 }
 
 func (f *file) String() string {
-	return f.name
+	return f.relative
 }
 
 func (f *file) LessThan(y rbtree.Comparable) bool {
@@ -23,5 +23,5 @@ func (f *file) EqualTo(y rbtree.Comparable) bool {
 // newFile creates normalized (i.e. without base part) file node
 func newFile(base, path string) *file {
 	normalized := path[len(base):]
-	return &file{name: normalized}
+	return &file{relative: normalized}
 }
