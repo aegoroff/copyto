@@ -42,7 +42,8 @@ func (c *Copier) CopyFileTree(source, target string, filter Filter) {
 
 func (c *Copier) createTree(target string, filter Filter) rbtree.RbTree {
 	h := newTreeCreator(target, filter)
-	scan.Scan(target, c.fs, h)
+	fs := newFs(c.fs)
+	scan.Scan(target, fs, h)
 	return h.tree
 }
 
@@ -100,4 +101,16 @@ func (c *Copier) printTotals(res copyResult, missing []string) {
 	var report = template.Must(template.New("copyResult").Parse(totalTemplate))
 	_ = report.Execute(c.prn.W(), res)
 	c.prn.ResetColor()
+}
+
+type aferofs struct {
+	fs afero.Fs
+}
+
+func newFs(fs afero.Fs) scan.Filesystem {
+	return &aferofs{fs: fs}
+}
+
+func (a *aferofs) Open(name string) (scan.File, error) {
+	return a.fs.Open(name)
 }
