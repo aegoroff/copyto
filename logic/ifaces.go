@@ -29,3 +29,11 @@ type Printer interface {
 type matcher interface {
 	match(file string) bool
 }
+
+// Logger provides application logging
+type Logger interface {
+	// Error outputs errors
+	Error(format string, a ...interface{})
+	// Verbose outputs detailed info
+	Verbose(format string, a ...interface{})
+}

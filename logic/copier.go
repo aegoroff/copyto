@@ -6,7 +6,6 @@ import (
 	"github.com/aegoroff/godatastruct/rbtree"
 	"github.com/gookit/color"
 	"github.com/spf13/afero"
-	"log"
 	"path/filepath"
 	"text/template"
 )
@@ -19,17 +18,17 @@ type copyResult struct {
 
 // Copier defines copy tree structure
 type Copier struct {
-	fs      afero.Fs
-	prn     Printer
-	verbose bool
+	fs  afero.Fs
+	prn Printer
+	lo  Logger
 }
 
 // NewCopier creates new Copier instance
 func NewCopier(fs afero.Fs, p Printer, verbose bool) *Copier {
 	return &Copier{
-		fs:      fs,
-		prn:     p,
-		verbose: verbose,
+		fs:  fs,
+		prn: p,
+		lo:  newLogger(p, verbose),
 	}
 }
 
@@ -72,12 +71,10 @@ func (c *Copier) copyTree(targetsTree rbtree.RbTree, source string, target strin
 
 func (c *Copier) copyFile(src string, tgt string, result *copyResult) {
 	if err := sys.CopyFile(src, tgt, c.fs); err != nil {
-		log.Printf("Cannot copy '%s' to '%s': %v", src, tgt, err)
+		c.lo.Error("Cannot copy '%s' to '%s': %v", src, tgt, err)
 		result.CopyErrors++
 	} else {
-		if c.verbose {
-			c.prn.Print("   <gray>%s</> copied to <gray>%s</>\n", src, tgt)
-		}
+		c.lo.Verbose("   <gray>%s</> copied to <gray>%s</>\n", src, tgt)
 		result.TotalCopied++
 	}
 }
