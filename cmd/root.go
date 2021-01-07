@@ -7,8 +7,7 @@ import (
 	"os"
 )
 
-// Verbose sets whether to use verbose output
-var Verbose bool
+var verbose bool
 
 var appFileSystem afero.Fs
 var appPrinter logic.Printer
@@ -40,7 +39,7 @@ func Execute(args ...string) error {
 		rootCmd.SetArgs(args)
 	}
 
-	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "Verbose output")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Verbose output")
 
 	rootCmd.AddCommand(newCmdline())
 	rootCmd.AddCommand(newConfigCmd())

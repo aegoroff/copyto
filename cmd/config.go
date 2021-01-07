@@ -51,7 +51,7 @@ func runConfigCmd(path string, fs afero.Fs) error {
 		return err
 	}
 
-	c := logic.NewCopier(fs, appPrinter, Verbose)
+	c := logic.NewCopier(fs, appPrinter, verbose)
 	for k, v := range config.Definitions {
 		source := findSource(v, config.Sources)
 		appPrinter.Print(" <gray>Section:</> %s\n <gray>Source:</> %s\n <gray>Target:</> %s\n", k, source, v.Target)

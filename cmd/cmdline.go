@@ -24,7 +24,7 @@ func newCmdline() *cobra.Command {
 
 			flt := logic.NewFilter(incl.Value.String(), excl.Value.String())
 
-			c := logic.NewCopier(appFileSystem, appPrinter, Verbose)
+			c := logic.NewCopier(appFileSystem, appPrinter, verbose)
 			c.CopyFileTree(src.Value.String(), tgt.Value.String(), flt)
 		},
 	}
