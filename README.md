@@ -33,6 +33,13 @@ Update copyto if already installed:
 brew upgrade copyto
 ```
 
+**scoop**:
+
+```sh
+scoop bucket add aegoroff https://github.com/aegoroff/scoop-bucket.git
+scoop install copyto
+```
+
 **manually**:
 
 Download the pre-compiled binaries from the [releases](https://github.com/aegoroff/copyto/releases) and

@@ -64,6 +64,14 @@ brews:
     description: "Small console app written in Go that allows you to easily one way sync between folders"
     license: "MIT"
 
+scoop:
+  bucket:
+    owner: aegoroff
+    name: scoop-bucket
+  homepage:  https://github.com/aegoroff/copyto
+  description: Small console app written in Go that allows you to easily one way sync between folders
+  license: MIT
+
 signs:
   - artifacts: checksum
 
