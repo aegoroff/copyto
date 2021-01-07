@@ -119,10 +119,10 @@ func Test_ReadOnlyTargets_NoneCopied(t *testing.T) {
 	ass.Equal("/t/p1/f2.txt", string(bytes2))
 	ass.Equal("/t/p1/p2/f1.txt", string(bytes3))
 	ass.Equal("/t/p1/p2/f2.txt", string(bytes4))
-	ass.Equal(sys.ToValidPath(`<red>Cannot copy 's/p1/f1.txt' to 't/p1/f1.txt': operation not permitted</>
-<red>Cannot copy 's/p1/f2.txt' to 't/p1/f2.txt': operation not permitted</>
-<red>Cannot copy 's/p1/p2/f1.txt' to 't/p1/p2/f1.txt': operation not permitted</>
-<red>Cannot copy 's/p1/p2/f2.txt' to 't/p1/p2/f2.txt': operation not permitted</>
+	ass.Equal(sys.ToValidPath(`<red>Cannot copy 's\p1\f1.txt' to 't\p1\f1.txt': operation not permitted</>
+<red>Cannot copy 's\p1\f2.txt' to 't\p1\f2.txt': operation not permitted</>
+<red>Cannot copy 's\p1/p2\f1.txt' to 't\p1\p2\f1.txt': operation not permitted</>
+<red>Cannot copy 's\p1\p2\f2.txt' to 't\p1\p2\f2.txt': operation not permitted</>
 
    Total copied:                              0
    Copy errors:                               4
@@ -202,7 +202,7 @@ func Test_copyTreeTargetsContainMissingSourcesElements_OnlyFoundCopiedFromSource
 	ass.Equal("/t/p1/f2.txt", string(bytes2))
 	ass.Equal(sys.ToValidPath(`
    <red>Found files that present in target but missing in source:</>
-     <gray>/p1/f2.txt</>
+     <gray>\p1\f2.txt</>
 
    Total copied:                              1
    Copy errors:                               0
@@ -364,7 +364,7 @@ func Test_copyTreeVerboseTrue_EachCopiedFileOutput(t *testing.T) {
 	c.CopyFileTree("s", "t", flt)
 
 	// Assert
-	ass.Equal(sys.ToValidPath(`   <gray>s/p1/f1.txt</> copied to <gray>t/p1/f1.txt</>
+	ass.Equal(sys.ToValidPath(`   <gray>s\p1\f1.txt</> copied to <gray>t\p1\f1.txt</>
 
    Total copied:                              1
    Copy errors:                               0
