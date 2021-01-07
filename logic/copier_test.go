@@ -119,7 +119,7 @@ func Test_ReadOnlyTargets_NoneCopied(t *testing.T) {
 	ass.Equal("/t/p1/f2.txt", string(bytes2))
 	ass.Equal("/t/p1/p2/f1.txt", string(bytes3))
 	ass.Equal("/t/p1/p2/f2.txt", string(bytes4))
-	ass.Equal(`<red>Cannot copy 's/p1/f1.txt' to 't/p1/f1.txt': operation not permitted</>
+	ass.Equal(sys.ToValidPath(`<red>Cannot copy 's/p1/f1.txt' to 't/p1/f1.txt': operation not permitted</>
 <red>Cannot copy 's/p1/f2.txt' to 't/p1/f2.txt': operation not permitted</>
 <red>Cannot copy 's/p1/p2/f1.txt' to 't/p1/p2/f1.txt': operation not permitted</>
 <red>Cannot copy 's/p1/p2/f2.txt' to 't/p1/p2/f2.txt': operation not permitted</>
@@ -128,7 +128,7 @@ func Test_ReadOnlyTargets_NoneCopied(t *testing.T) {
    Copy errors:                               4
    Present in target but not found in source: 0
 
-`, buf.String())
+`), buf.String())
 }
 
 func Test_copyTreeSourcesMoreThenTargets_OnlyMathesCopiedFromSources(t *testing.T) {
@@ -200,15 +200,15 @@ func Test_copyTreeTargetsContainMissingSourcesElements_OnlyFoundCopiedFromSource
 	bytes2, _ := afero.ReadFile(appFS, "t/p1/f2.txt")
 	ass.Equal("/s/p1/f1.txt", string(bytes1))
 	ass.Equal("/t/p1/f2.txt", string(bytes2))
-	ass.Equal(fmt.Sprintf(`
+	ass.Equal(sys.ToValidPath(`
    <red>Found files that present in target but missing in source:</>
-     <gray>%cp1%cf2.txt</>
+     <gray>/p1/f2.txt</>
 
    Total copied:                              1
    Copy errors:                               0
    Present in target but not found in source: 1
 
-`, os.PathSeparator, os.PathSeparator), buf.String())
+`), buf.String())
 }
 
 func Test_copyTreeSourcesContainsSameNameFilesButInSubfolders_OnlyExactMatchedCopiedFromSources(t *testing.T) {
@@ -364,13 +364,13 @@ func Test_copyTreeVerboseTrue_EachCopiedFileOutput(t *testing.T) {
 	c.CopyFileTree("s", "t", flt)
 
 	// Assert
-	ass.Equal(fmt.Sprintf(`   <gray>s%cp1%cf1.txt</> copied to <gray>t%cp1%cf1.txt</>
+	ass.Equal(sys.ToValidPath(`   <gray>s/p1/f1.txt</> copied to <gray>t/p1/f1.txt</>
 
    Total copied:                              1
    Copy errors:                               0
    Present in target but not found in source: 0
 
-`, os.PathSeparator, os.PathSeparator, os.PathSeparator, os.PathSeparator), buf.String())
+`), buf.String())
 }
 
 func Test_copyTreeUnexistTarget_NoFilesCopied(t *testing.T) {

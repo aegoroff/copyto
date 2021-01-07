@@ -5,6 +5,8 @@ import (
 	"github.com/aegoroff/dirstat/scan"
 	"github.com/spf13/afero"
 	"io"
+	"os"
+	"strings"
 )
 
 // CopyFile copies file from src to dst
@@ -31,4 +33,12 @@ func CopyFile(src, dst string, fs afero.Fs) error {
 	defer scan.Close(destination)
 	_, err = io.Copy(destination, source)
 	return err
+}
+
+// ToValidPath creates valid OS specific path from path specified
+func ToValidPath(p string) string {
+	if os.PathSeparator != '/' {
+		return p
+	}
+	return strings.ReplaceAll(p, "\\", "/")
 }
