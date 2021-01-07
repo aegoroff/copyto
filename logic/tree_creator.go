@@ -21,7 +21,7 @@ func newTreeCreator(target string, filter Filter) *treeCreator {
 	return &tc
 }
 
-func (t *treeCreator) Handle(evt *scan.ScanEvent) {
+func (t *treeCreator) Handle(evt *scan.Event) {
 	if evt.File == nil {
 		return
 	}
