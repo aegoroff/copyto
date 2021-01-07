@@ -121,7 +121,7 @@ func Test_ReadOnlyTargets_NoneCopied(t *testing.T) {
 	ass.Equal("/t/p1/p2/f2.txt", string(bytes4))
 	ass.Equal(sys.ToValidPath(`<red>Cannot copy 's\p1\f1.txt' to 't\p1\f1.txt': operation not permitted</>
 <red>Cannot copy 's\p1\f2.txt' to 't\p1\f2.txt': operation not permitted</>
-<red>Cannot copy 's\p1/p2\f1.txt' to 't\p1\p2\f1.txt': operation not permitted</>
+<red>Cannot copy 's\p1\p2\f1.txt' to 't\p1\p2\f1.txt': operation not permitted</>
 <red>Cannot copy 's\p1\p2\f2.txt' to 't\p1\p2\f2.txt': operation not permitted</>
 
    Total copied:                              0
