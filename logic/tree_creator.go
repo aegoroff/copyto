@@ -14,7 +14,7 @@ type treeCreator struct {
 
 func newTreeCreator(target string, filter Filter) *treeCreator {
 	tc := treeCreator{
-		tree:   rbtree.NewRbTree(),
+		tree:   rbtree.New(),
 		target: target,
 		filter: filter,
 	}

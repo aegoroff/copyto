@@ -12,11 +12,11 @@ func (f *file) String() string {
 	return f.relative
 }
 
-func (f *file) LessThan(y rbtree.Comparable) bool {
+func (f *file) Less(y rbtree.Comparable) bool {
 	return f.String() < (y.(*file)).String()
 }
 
-func (f *file) EqualTo(y rbtree.Comparable) bool {
+func (f *file) Equal(y rbtree.Comparable) bool {
 	return f.String() == (y.(*file)).String()
 }
 
