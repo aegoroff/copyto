@@ -37,15 +37,23 @@ builds:
       - freebsd
     goarch:
       - arm
-      - arm64
     goarm:
       - 7
+
+  - id: "arm64"
+    binary: copyto
+    ldflags: -s -w -X copyto/cmd.Version={{ .Version }}
+    goos:
+      - darwin
+    goarch:
+      - arm64
 
 archives:
   - id: default
     builds:
       - x64
       - arm
+      - arm64
       - 386
 
 brews:
