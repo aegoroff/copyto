@@ -3,7 +3,7 @@ module copyto
 go 1.17
 
 require (
-	github.com/aegoroff/dirstat v1.0.6
+	github.com/aegoroff/dirstat v1.0.7
 	github.com/aegoroff/godatastruct v1.2.0
 	github.com/gookit/color v1.4.2
 	github.com/pelletier/go-toml v1.9.4
@@ -18,7 +18,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 // indirect
-	golang.org/x/sys v0.0.0-20210510120138-977fb7262007 // indirect
-	golang.org/x/text v0.3.6 // indirect
+	golang.org/x/sys v0.0.0-20210909193231-528a39cd75f3 // indirect
+	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
