@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/aegoroff/dirstat v1.0.7
 	github.com/aegoroff/godatastruct v1.2.0
-	github.com/gookit/color v1.4.2
+	github.com/gookit/color v1.5.0
 	github.com/pelletier/go-toml v1.9.4
 	github.com/spf13/afero v1.6.0
 	github.com/spf13/cobra v1.2.1
