@@ -3,7 +3,7 @@ module copyto
 go 1.17
 
 require (
-	github.com/aegoroff/dirstat v1.0.7
+	github.com/aegoroff/dirstat v1.0.8
 	github.com/aegoroff/godatastruct v1.2.0
 	github.com/gookit/color v1.5.0
 	github.com/pelletier/go-toml v1.9.4
