@@ -35,7 +35,7 @@ func init() {
 func Execute(args ...string) error {
 	rootCmd := newRoot()
 
-	if args != nil && len(args) > 0 {
+	if len(args) > 0 {
 		rootCmd.SetArgs(args)
 	}
 

@@ -26,7 +26,7 @@ func newMockPrn() *mockprn {
 
 func (m *mockprn) Print(format string, a ...interface{}) {
 	str := fmt.Sprintf(format, a...)
-	_, _ = fmt.Fprintf(m.w, str)
+	_, _ = fmt.Fprint(m.w, str)
 }
 
 func (m *mockprn) W() io.Writer { return m.w }
