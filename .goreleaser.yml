@@ -45,6 +45,7 @@ builds:
     ldflags: -s -w -X copyto/cmd.Version={{ .Version }}
     goos:
       - darwin
+      - linux
     goarch:
       - arm64
 
@@ -57,8 +58,7 @@ archives:
       - 386
 
 brews:
--
-    goarm: 7
+  - goarm: 7
     tap:
       owner: aegoroff
       name: homebrew-tap
@@ -66,7 +66,7 @@ brews:
       name: "Alexander Egorov"
       email: "egoroff@gmail.com"
     test: |
-        assert_match version.to_s, shell_output("#{bin}/copyto ver")
+      assert_match version.to_s, shell_output("#{bin}/copyto ver")
     homepage: "https://github.com/aegoroff/copyto"
     description: "Small console app written in Go that allows you to easily one way sync between folders"
     license: "MIT"
@@ -75,13 +75,12 @@ scoop:
   bucket:
     owner: aegoroff
     name: scoop-bucket
-  homepage:  https://github.com/aegoroff/copyto
+  homepage: https://github.com/aegoroff/copyto
   description: Small console app written in Go that allows you to easily one way sync between folders
   license: MIT
 
 nfpms:
-  -
-    package_name: copyto
+  - package_name: copyto
     homepage: https://github.com/aegoroff/copyto
     maintainer: Alexander Egorov <egoroff@gmail.com>
     description: Small console app written in Go that allows you to easily one way sync between folders
@@ -93,7 +92,16 @@ nfpms:
 
 signs:
   - artifacts: checksum
-    args: ["--batch", "-u", "{{ .Env.GPG_FINGERPRINT }}", "--output", "${signature}", "--detach-sign", "${artifact}"]
+    args:
+      [
+        "--batch",
+        "-u",
+        "{{ .Env.GPG_FINGERPRINT }}",
+        "--output",
+        "${signature}",
+        "--detach-sign",
+        "${artifact}",
+      ]
 
 checksum:
   name_template: "checksums.txt"
