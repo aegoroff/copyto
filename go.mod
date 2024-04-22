@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/aegoroff/dirstat v1.2.4
-	github.com/aegoroff/godatastruct v1.3.0
+	github.com/aegoroff/godatastruct v1.4.0
 	github.com/gookit/color v1.5.4
 	github.com/pelletier/go-toml v1.9.5
 	github.com/spf13/afero v1.11.0
