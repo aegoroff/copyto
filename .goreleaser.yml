@@ -27,7 +27,7 @@ builds:
       - openbsd
       - netbsd
     goarch:
-      - 386
+      - "386"
 
   - id: "arm"
     binary: copyto
@@ -38,7 +38,7 @@ builds:
     goarch:
       - arm
     goarm:
-      - 7
+      - "7"
 
   - id: "arm64"
     binary: copyto
@@ -55,7 +55,7 @@ archives:
       - x64
       - arm
       - arm64
-      - 386
+      - "386"
 
 brews:
   - goarm: 7
