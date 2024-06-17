@@ -10,7 +10,7 @@ require (
 	github.com/gookit/color v1.5.4
 	github.com/pelletier/go-toml v1.9.5
 	github.com/spf13/afero v1.11.0
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.9.0
 )
 
