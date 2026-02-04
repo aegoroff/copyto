@@ -38,7 +38,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
-      - name: Publish dirstat-go-bin
+      - name: Publish copyto-go-bin
         uses: zokugun/github-actions-aur-releaser@v1
         with:
           package_name: copyto-go-bin
