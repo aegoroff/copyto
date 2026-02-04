@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build
-        run: gox -osarch="${{ matrix.build }}/amd64" -ldflags "-s -w -X copyto/cmd.Version=v1.2.${{ github.run_number }}-dev" copyto
+        run: gox -osarch="${{ matrix.build }}/amd64" -ldflags "-s -w -X copyto/cmd.Version=v1.3.${{ github.run_number }}-dev" copyto
 
       - name: Test with coverage
         if: matrix.build == 'linux'
