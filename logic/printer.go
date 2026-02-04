@@ -29,5 +29,5 @@ func (p *prn) W() io.Writer {
 
 func (p *prn) Print(format string, a ...interface{}) {
 	str := fmt.Sprintf(format, a...)
-	color.Fprintf(p.w, str)
+	color.Fprintf(p.w, "%s",  str)
 }
