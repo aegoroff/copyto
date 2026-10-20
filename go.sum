@@ -1,5 +1,5 @@
-github.com/aegoroff/dirstat v1.4.1 h1:XfiBICdOna8jZOv8ccWi6h/EklneDfsNgEg2tTJEju0=
-github.com/aegoroff/dirstat v1.4.1/go.mod h1:a72bKBHXktMEzSxnt7NtGdhk73FrlEcYNI6Rqjt2wJk=
+github.com/aegoroff/dirstat v1.4.2 h1:3uEB0oiHCBUIvs2cgw6B+MXoYtTjdKtdx+3eXzyy+PA=
+github.com/aegoroff/dirstat v1.4.2/go.mod h1:3GeVWuCaa1FH7opOxAnoC1k4KdYpb3Wy6N7SiUXEXzU=
 github.com/aegoroff/godatastruct v1.6.0 h1:jqK6Ik3ZBl2BYJlNldZXgsSav5eXtOlc76qGqr44nw4=
 github.com/aegoroff/godatastruct v1.6.0/go.mod h1:1623936jaDQtxmJ2P2L/JfX7GjC3+tGz6jp2YYPvjW4=
 github.com/blang/semver v3.5.1+incompatible h1:cQNTCjp13qL8KC3Nbxr/y2Bqb63oX6wdnnjpJbkM4JQ=
