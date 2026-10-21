@@ -1,7 +1,7 @@
 # copyto
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/63fe9df66b8044c1a8360ce1d830b610)](https://app.codacy.com/gh/aegoroff/copyto/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
-[![CI](https://github.com/aegoroff/copyto/actions/workflows/ci.yml/badge.svg)](https://github.com/aegoroff/copyto/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/aegoroff/copyto/branch/master/graph/badge.svg)](https://codecov.io/gh/aegoroff/copyto) [![Go Report Card](https://goreportcard.com/badge/github.com/aegoroff/copyto)](https://goreportcard.com/report/github.com/aegoroff/copyto)
+[![CI](https://github.com/aegoroff/copyto/actions/workflows/ci.yml/badge.svg)](https://github.com/aegoroff/copyto/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/aegoroff/copyto/branch/master/graph/badge.svg)](https://codecov.io/gh/aegoroff/copyto)
 
 **copyto** is a small command line app written in Go that allows you to easily one way
 sync files between source folder and target folder. i.e. all files from source that
